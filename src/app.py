@@ -1,34 +1,26 @@
-from werkzeug.wrappers import Request, Response
-
-class Resource(object):
-    def __init__(self, request):
-        print dir(request);
-        
-        
-        
-
-class PostCollection(Resource):
-   pass 
-
-class Post(Resource):
-    pass
-
+from werkzeug.wrappers import Request, BaseResponse as Response
 from werkzeug.routing import Map, Rule, NotFound, RequestRedirect
+from jinja2 import Environment, FileSystemLoader 
+import uuid
+import base64
+import time
+
+
+### Load templates
+admin_templates_path='/home/viktor/Projects/remns/templates/admin'
+admin_env = Environment(loader=FileSystemLoader(admin_templates_path))
 
 class EndPoint(object):
     def __init__(self, request, path_params):
         self.response = "Default response!"
         self.request = request
         self.path_params  = path_params
-        print self.request.method
         verb_map = {
             'GET' : self.get,
             'POST': self.post
-
         }
-
-        verb_map[self.request.method]()
-
+        self.response_method = verb_map[self.request.method]
+        
     def get(self):
         pass
 
@@ -39,7 +31,28 @@ class EndPoint(object):
         pass
 
     def get_response(self):
-        return Response(self.response)
+        response = self.response_method()
+        return response
+
+class AdminEndPoint(EndPoint):
+    def __init__(self, request, path_params):
+        print request.cookies
+        EndPoint.__init__(self, request, path_params)
+
+    
+    # def get_response(self):
+    #     """
+    #         This is called when the correct cookies do not exist.
+    #     """
+    #     print "Called adminendpoint get_response"
+    #     return Response(self.response)
+        
+remns_user = "viktor"
+remns_password = "password"
+
+# Store a timeout. This is meant for single users,
+# a dict is more than sufficient.
+session_cookies = {}
 
 class ViewPost(EndPoint):
     def get(self):
@@ -52,20 +65,44 @@ class ViewPost(EndPoint):
         print self.request
         self.response = "postin posts!"
 
-    def get_response(self):
-        print "getting response!"
-        return Response(self.response)
-
-class AdminLogin(object):
+class AdminLogin(AdminEndPoint):
     def get(self):
         print "get admin request!"
-        print self.request
+        template = admin_env.get_template('login.html')
+        return Response(template.render(), mimetype="text/html")
+
+    def generate_cookie(self):
+       return base64.b64encode(str(uuid.uuid4())) 
 
     def post(self):
-        print "post request!"
-        print self.request
+        print dir(self.request)
 
-class AdminPost(object):
+        print "post request!"
+        print dir(self.request.form)
+        login_form = self.request.form
+        if login_form.has_key('admin-username') and login_form.has_key('admin-password'):
+        
+            submitted_user = self.request.form['admin-username']
+            submitted_password = self.request.form['admin-password']
+            if submitted_user == remns_user and submitted_password == remns_password:
+                cookie = self.generate_cookie()
+                session_cookies[cookie] = int(time.time())
+                response = Response("log in good!")
+                response.set_cookie('remns_session_id', cookie)
+                return response
+
+        return Response("BAD LOGIN!")
+
+
+class AdminPost(AdminEndPoint):
+    def get(self):
+        print "in admin post"
+        self.request = "YOOOO"
+
+    def post(self):
+        pass
+
+class AdminAllPosts(AdminEndPoint):
     def get(self):
         pass
 
@@ -75,6 +112,9 @@ class AdminPost(object):
 
 url_map = Map([
     Rule('/', endpoint=ViewPost),
+    Rule('/admin', endpoint=AdminLogin),
+    Rule('/admin/posts', endpoint=AdminAllPosts),
+    Rule('/admin/posts/<int:id>', endpoint=AdminPost),
     Rule('/<int:year>/', endpoint=ViewPost),
     Rule('/<int:year>/<int:month>/', endpoint=ViewPost),
     Rule('/<int:year>/<int:month>/<int:day>/', endpoint=ViewPost),
@@ -83,20 +123,13 @@ url_map = Map([
 
 @Request.application
 def app(request):
-#    print dir(request)
-
-#    tokens = request.path.split("/")    
     urls = url_map.bind_to_environ(request.environ)
     endpoint, args = urls.match()
     if(endpoint):
-        print endpoint
-        print args
-        print request.values
-
         controller = endpoint(request, args)
-        print "initiated controller!"
-        print controller.get_response()
-        return controller.get_response()
+        response = controller.get_response()
+        print response
+        return response
 
     else:
         print  "Essentially a 404"
