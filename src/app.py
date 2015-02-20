@@ -36,17 +36,21 @@ class EndPoint(object):
 
 class AdminEndPoint(EndPoint):
     def __init__(self, request, path_params):
-        print request.cookies
-        EndPoint.__init__(self, request, path_params)
+        if(session_cookies.get(request.cookies.get('remns_session_id'))):
+            EndPoint.__init__(self, request, path_params)
 
-    
-    # def get_response(self):
-    #     """
-    #         This is called when the correct cookies do not exist.
-    #     """
-    #     print "Called adminendpoint get_response"
-    #     return Response(self.response)
-        
+        elif isinstance(self, AdminLogin):
+            print 'yo'
+            EndPoint.__init__(self, request, path_params)
+
+        else:
+            print "need to redirect!"
+            self.response = "403"
+
+    def response_method(self):
+        print "hacky"
+        return Response("this is redirect!")
+
 remns_user = "viktor"
 remns_password = "password"
 
@@ -75,10 +79,6 @@ class AdminLogin(AdminEndPoint):
        return base64.b64encode(str(uuid.uuid4())) 
 
     def post(self):
-        print dir(self.request)
-
-        print "post request!"
-        print dir(self.request.form)
         login_form = self.request.form
         if login_form.has_key('admin-username') and login_form.has_key('admin-password'):
         
@@ -104,7 +104,7 @@ class AdminPost(AdminEndPoint):
 
 class AdminAllPosts(AdminEndPoint):
     def get(self):
-        pass
+        return Response("Yo!") 
 
     def post(self):
         pass
