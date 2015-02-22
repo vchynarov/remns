@@ -1,5 +1,5 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
+var gulp = require('gulp'),
+    concat = require('gulp-concat');
 
 gulp.task('default', ['build-vendor-css', 'build-vendor-js', 'build-epiceditor']);
 
@@ -8,6 +8,7 @@ var adminPaths = {
         'bower_components/semantic-ui/dist/semantic.min.css',
      ],
     'js' : [
+        'bower_components/jquery/dist/jquery.min.js',
         'bower_components/epiceditor/epiceditor/js/epiceditor.js',
         'bower_components/semantic-ui/dist/semantic.js'
      ]

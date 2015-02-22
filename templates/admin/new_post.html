@@ -5,19 +5,79 @@
     Create a new post!
 </h2>
 
-<div id="epiceditor"></div>
+<form id="post-form" class="ui form" action="/admin/posts" method="post">
+
+    <div class="field">
+      <label>Title</label>
+      <input name="post-title" placeholder="Enter in your posts title" type="text">
+    </div>
+
+
+    <div id="epiceditor"></div>
+
+  <a href="javascript:void(0)" id="epiceditor-publish" class="fluid ui button">
+    Publish
+  </a>
+  <a href="javascript:void(0)" id="epiceditor-draft" class="fluid ui button">
+    Save as Draft 
+  </a>
+
+</form>
+
+
 
 <script>
+    // mode is either published / draft
+    var getParams = function(mode) {
+        var post = {};
+        post.title = $('[name=post-title]').val();
+        post.content = editor.exportFile();
+        post.mode = mode;
+        return post;
+    };
+
+    var savePost = function(post) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/posts",
+            data: post,
+            success: function(data) {
+                console.log("Succesfully submitted!");
+                console.log("Yo!");
+                console.log(data);
+
+                if(data.status === 'success') {
+
+                }
+                else if(data.status === 'error') {
+
+                }
+            }
+        });
+    }
+    $('#epiceditor-publish').click(function(evt) {
+        var post = getParams('published');
+        console.dir(post);
+        savePost(post);
+    });
+
+    $('#epiceditor-draft').click(function(evt) {
+        console.log(evt);
+        console.log(this);
+    });
+    
+    
     var createUrl = function() {
         return 'http://' + window.location.host + '/static';
-
     };
 
     var opts = {
+      clientSideStorage: false,
+      basePath: '/static/epiceditor',
       theme: {
-        base: createUrl() + '/epiceditor/base/epiceditor.css',
-        preview: createUrl() + '/epiceditor/preview/preview-dark.css',
-        editor: createUrl() + '/epiceditor/editor/epic-dark.css'
+        base: '/base/epiceditor.css',
+        preview: '/preview/preview-dark.css',
+        editor: '/editor/epic-dark.css'
       },
       autogrow: {
         minHeight: 500,

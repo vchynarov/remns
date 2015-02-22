@@ -5,11 +5,13 @@ from jinja2 import Environment, FileSystemLoader
 import uuid
 import base64
 import time
+from json.encoder import JSONEncoder
 
 
 ### Load templates
 admin_templates_path='/home/viktor/Projects/remns/templates/admin'
 admin_env = Environment(loader=FileSystemLoader(admin_templates_path))
+json_encoder = JSONEncoder()
 
 class EndPoint(object):
     def __init__(self, request, path_params):
@@ -105,7 +107,14 @@ class AdminAllPosts(AdminEndPoint):
         return Response("Yo!") 
 
     def post(self):
-        pass
+        print dir(self.request)
+        print self.request.form
+        print "Submitted!"
+        if(True):
+            response_json = {"status": "success", "id": 2}
+        else:
+            response_json = {"status": "error"}
+        return Response(json_encoder.encode(response_json))
 
 
 class AdminCreatePost(AdminEndPoint):
@@ -114,6 +123,16 @@ class AdminCreatePost(AdminEndPoint):
         return Response(template.render(), mimetype="text/html")
 
 
+class AdminAllCategories(AdminEndPoint):
+    def get(self):
+        return Response("..")
+
+    def post(self):
+        return Response("..")
+
+class AdminCreateCategory(AdminEndPoint):
+    def get(self):
+        return Response("...")
 
 url_map = Map([
     Rule('/', endpoint=ViewPost),
@@ -121,6 +140,8 @@ url_map = Map([
     Rule('/admin/posts', endpoint=AdminAllPosts),
     Rule('/admin/posts/new', endpoint=AdminCreatePost),
     Rule('/admin/posts/<int:id>', endpoint=AdminPost),
+    Rule('/admin/categories', endpoint=AdminAllCategories),
+    Rule('/admin/categories/new', endpoint=AdminCreateCategory),
     Rule('/<int:year>/', endpoint=ViewPost),
     Rule('/<int:year>/<int:month>/', endpoint=ViewPost),
     Rule('/<int:year>/<int:month>/<int:day>/', endpoint=ViewPost),
@@ -131,6 +152,7 @@ url_map = Map([
 def app(request):
     urls = url_map.bind_to_environ(request.environ)
     endpoint, args = urls.match()
+
     if(endpoint):
         controller = endpoint(request, args)
         response = controller.get_response()
