@@ -108,10 +108,18 @@ class AdminAllPosts(AdminEndPoint):
         pass
 
 
+class AdminCreatePost(AdminEndPoint):
+    def get(self):
+        template = admin_env.get_template('new_post.html')
+        return Response(template.render(), mimetype="text/html")
+
+
+
 url_map = Map([
     Rule('/', endpoint=ViewPost),
     Rule('/admin', endpoint=AdminLogin),
     Rule('/admin/posts', endpoint=AdminAllPosts),
+    Rule('/admin/posts/new', endpoint=AdminCreatePost),
     Rule('/admin/posts/<int:id>', endpoint=AdminPost),
     Rule('/<int:year>/', endpoint=ViewPost),
     Rule('/<int:year>/<int:month>/', endpoint=ViewPost),

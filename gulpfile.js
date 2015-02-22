@@ -1,16 +1,23 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 
-gulp.task('default', ['build-vendor-css', 'build-vendor-js']);
+gulp.task('default', ['build-vendor-css', 'build-vendor-js', 'build-epiceditor']);
 
 var adminPaths = {
     'css' : [
-        'bower_components/semantic-ui/dist/semantic.min.css'
+        'bower_components/semantic-ui/dist/semantic.min.css',
      ],
     'js' : [
-        'bower_components/semantic-ui/dist/semantic.min.js'
+        'bower_components/epiceditor/epiceditor/js/epiceditor.js',
+        'bower_components/semantic-ui/dist/semantic.js'
      ]
 };
+
+// epiceditor requires 'explicity' styling by providing links to CSS files.
+gulp.task('build-epiceditor', function() {
+    return gulp.src('bower_components/epiceditor/epiceditor/themes/**/*.css')
+        .pipe(gulp.dest('static/epiceditor'));
+});
 
 gulp.task('build-vendor-css', function() {
     return gulp.src(adminPaths.css)

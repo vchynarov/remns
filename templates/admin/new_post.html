@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h2>
+    Create a new post!
+</h2>
+
+<div id="epiceditor"></div>
+
+<script>
+    var createUrl = function() {
+        return 'http://' + window.location.host + '/static';
+
+    };
+
+    var opts = {
+      theme: {
+        base: createUrl() + '/epiceditor/base/epiceditor.css',
+        preview: createUrl() + '/epiceditor/preview/preview-dark.css',
+        editor: createUrl() + '/epiceditor/editor/epic-dark.css'
+      },
+      autogrow: {
+        minHeight: 500,
+        maxHeight: 500
+      }
+    }
+    var editor = new EpicEditor(opts).load();
+</script>
+
+{% endblock %}

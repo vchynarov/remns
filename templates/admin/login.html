@@ -1,43 +1,27 @@
-<html>
-    <head>
-        <title>Login to Remns.</title>
-        <link href="/static/admin.css" rel="stylesheet" type="text/css" />
-        <script src="/static/admin.js"></script>
+{% extends "base.html" %}
+{% block main %}
+<header>
+    <h3> 
+        Login to remns admin panel
+    </h3>
 
-    </head>
+</header>
 
+<form class="ui form" method="post">
+  <div class="two fields">
+    <div class="field">
+      <label>Username</label>
+      <input name="admin-username" placeholder="username" type="text">
+    </div>
+    <div class="field" >
+      <label>Password</label>
+      <input name="admin-password" type="password">
+    </div>
+  </div>
+  <button type="submit" class="fluid ui button">
+    Login
 
-    <body>
-    
-        <div class="main container">
-            <header>
-                <h3> 
-                    Login to remns admin panel
-                </h3>
+  </button>
+</form>
 
-            </header>
-            <form class="ui form" method="post">
-              <div class="two fields">
-                <div class="field">
-                  <label>Username</label>
-                  <input name="admin-username" placeholder="username" type="text">
-                </div>
-                <div class="field" >
-                  <label>Password</label>
-                  <input name="admin-password" type="password">
-                </div>
-              </div>
-              <button type="submit" class="fluid ui button">
-                Login
-
-              </button>
-            </form>
-        </div>
-
-
-
-    </body>
-
-
-
-    </html>
+{% endblock %}
