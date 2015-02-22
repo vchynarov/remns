@@ -1,5 +1,6 @@
 from werkzeug.wrappers import Request, BaseResponse as Response
 from werkzeug.routing import Map, Rule, NotFound, RequestRedirect
+from werkzeug.utils import redirect
 from jinja2 import Environment, FileSystemLoader 
 import uuid
 import base64
@@ -15,42 +16,39 @@ class EndPoint(object):
         self.response = "Default response!"
         self.request = request
         self.path_params  = path_params
-        verb_map = {
-            'GET' : self.get,
-            'POST': self.post
-        }
-        self.response_method = verb_map[self.request.method]
-        
+                
     def get(self):
         pass
 
     def post(self):
         pass
 
+    def put(self):
+        pass
+
     def delete(self):
         pass
 
     def get_response(self):
-        response = self.response_method()
-        return response
+        verb_map = {
+            'GET' : self.get,
+            'POST': self.post
+        }
+        return verb_map[self.request.method]()
 
 class AdminEndPoint(EndPoint):
-    def __init__(self, request, path_params):
-        if(session_cookies.get(request.cookies.get('remns_session_id'))):
-            EndPoint.__init__(self, request, path_params)
-
-        elif isinstance(self, AdminLogin):
-            print 'yo'
-            EndPoint.__init__(self, request, path_params)
-
+    def get_response(self):
+        authenticated = session_cookies.get(self.request.cookies.get('remns_session_id'))
+        login_page = isinstance(self, AdminLogin)
+        if(authenticated):
+            if(login_page):
+                return redirect('/admin/posts')
+            return EndPoint.get_response(self)
+        elif(login_page):
+            return EndPoint.get_response(self)
         else:
-            print "need to redirect!"
-            self.response = "403"
-
-    def response_method(self):
-        print "hacky"
-        return Response("this is redirect!")
-
+            return redirect('/admin')
+                
 remns_user = "viktor"
 remns_password = "password"
 
@@ -87,7 +85,7 @@ class AdminLogin(AdminEndPoint):
             if submitted_user == remns_user and submitted_password == remns_password:
                 cookie = self.generate_cookie()
                 session_cookies[cookie] = int(time.time())
-                response = Response("log in good!")
+                response = redirect(self.request.path)
                 response.set_cookie('remns_session_id', cookie)
                 return response
 
