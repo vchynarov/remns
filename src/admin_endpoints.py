@@ -5,65 +5,63 @@ import uuid
 import base64
 import time
 from json.encoder import JSONEncoder
-from jinja2 import Environment, FileSystemLoader 
 
-
-### Load templates
-admin_templates_path='/home/viktor/Projects/remns/templates/admin'
-admin_env = Environment(loader=FileSystemLoader(admin_templates_path))
 json_encoder = JSONEncoder()
-
-
-class AdminEndPoint(EndPoint):
-    def get_response(self):
-        authenticated = session_cookies.get(self.request.cookies.get('remns_session_id'))
-        login_page = isinstance(self, Login)
-        if(authenticated):
-            if(login_page):
-                return redirect('/admin/posts')
-            return EndPoint.get_response(self)
-        elif(login_page):
-            return EndPoint.get_response(self)
-        else:
-            return redirect('/admin')
-                
-remns_user = "viktor"
-remns_password = "password"
-
 # Store a timeout. This is meant for single users,
 # a dict is more than sufficient.
 session_cookies = {}
 
+def generate_cookie():
+   return base64.b64encode(str(uuid.uuid4()))
+
+class AdminEndPoint(EndPoint):
+    def get_response(self, request):
+        authenticated = session_cookies.get(request.cookies.get('remns_session_id'))
+        login_page = isinstance(self, Login)
+        if(authenticated):
+            if(login_page):
+                return redirect('/admin/posts')
+            return super(AdminEndPoint, self).get_response(request)
+        elif(login_page):
+            return super(AdminEndPoint, self).get_response(request)
+        else:
+            return redirect('/admin')
+                
 class ViewPost(AdminEndPoint):
-    def get(self):
+    def get(self, request):
         print "get request!"
-        print self.request
+        print request
         self.response = "getting posts"
 
-    def post(self):
+    def post(self, request):
         print "post request!"
-        print self.request
+        print request
         self.response = "postin posts!"
 
 class Login(AdminEndPoint):
-    def get(self):
-        print "get admin request!"
-        template = admin_env.get_template('login.html')
+    def __init__(self, template_env, username, password):
+        super(Login, self).__init__(template_env)
+        self.username = username
+        self.password = password
+
+    def get(self, request):
+        template = self.template_env.get_template('login.html')
         return Response(template.render(), mimetype="text/html")
 
-    def generate_cookie(self):
-       return base64.b64encode(str(uuid.uuid4())) 
-
-    def post(self):
-        login_form = self.request.form
+    def post(self, request):
+        login_form = request.form
         if login_form.has_key('admin-username') and login_form.has_key('admin-password'):
         
-            submitted_user = self.request.form['admin-username']
-            submitted_password = self.request.form['admin-password']
-            if submitted_user == remns_user and submitted_password == remns_password:
-                cookie = self.generate_cookie()
+            submitted_user = request.form['admin-username']
+            submitted_password = request.form['admin-password']
+            print submitted_password
+            print submitted_user
+            print self.username
+            print self.password
+            if submitted_user == self.username and submitted_password == self.password:
+                cookie = generate_cookie()
                 session_cookies[cookie] = int(time.time())
-                response = redirect(self.request.path)
+                response = redirect(request.path)
                 response.set_cookie('remns_session_id', cookie)
                 return response
 
@@ -71,20 +69,19 @@ class Login(AdminEndPoint):
 
 
 class Post(AdminEndPoint):
-    def get(self):
-        print "in admin post"
-        self.request = "YOOOO"
+    def get(self, request):
+        return Response("yoo")
 
-    def post(self):
+    def post(self, request):
         pass
 
 class AllPosts(AdminEndPoint):
-    def get(self):
+    def get(self, request):
         return Response("Yo!") 
 
-    def post(self):
-        print dir(self.request)
-        print self.request.form
+    def post(self, request):
+        print dir(request)
+        print request.form
         print "Submitted!"
         if(True):
             response_json = {"status": "success", "id": 2}
@@ -94,20 +91,20 @@ class AllPosts(AdminEndPoint):
 
 
 class CreatePost(AdminEndPoint):
-    def get(self):
-        template = admin_env.get_template('new_post.html')
+    def get(self, request):
+        template = self.template_env.get_template('new_post.html')
         return Response(template.render(), mimetype="text/html")
 
 
 class AllCategories(AdminEndPoint):
-    def get(self):
+    def get(self, request):
         return Response("..")
 
-    def post(self):
+    def post(self, request):
         return Response("..")
 
 class CreateCategory(AdminEndPoint):
-    def get(self):
+    def get(self, request):
         return Response("...")
 
 
