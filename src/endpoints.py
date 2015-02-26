@@ -25,6 +25,10 @@ class EndPoint(object):
         return verb_map[request.method](request)
 
 class ViewPost(EndPoint):
+    def __init__(self, template_env, post_service):
+        super(ViewPost, self).__init__(template_env)
+        self.post_service = post_service
+
     def get(self, request):
         print "get request!"
         print request

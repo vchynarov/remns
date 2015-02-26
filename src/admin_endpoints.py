@@ -28,6 +28,10 @@ class AdminEndPoint(EndPoint):
             return redirect('/admin')
                 
 class ViewPost(AdminEndPoint):
+    def __init__(self, template_env, post_service):
+        super(Login, self).__init__(self, template_env)
+        self.post_service = post_service
+
     def get(self, request):
         print "get request!"
         print request
@@ -69,6 +73,10 @@ class Login(AdminEndPoint):
 
 
 class Post(AdminEndPoint):
+    def __init__(self, template_env, post_service):
+        super(Post, self).__init__(template_env)
+        self.post_service = post_service
+
     def get(self, request):
         return Response("yoo")
 
@@ -76,6 +84,10 @@ class Post(AdminEndPoint):
         pass
 
 class AllPosts(AdminEndPoint):
+    def __init__(self, template_env, post_service):
+        super(AllPosts, self).__init__(template_env)
+        self.post_service = post_service
+
     def get(self, request):
         return Response("Yo!") 
 
@@ -91,19 +103,31 @@ class AllPosts(AdminEndPoint):
 
 
 class CreatePost(AdminEndPoint):
+    def __init__(self, template_env, post_service):
+        super(CreatePost, self).__init__(template_env)
+        self.post_service = post_service
+
     def get(self, request):
         template = self.template_env.get_template('new_post.html')
         return Response(template.render(), mimetype="text/html")
 
 
-class AllCategories(AdminEndPoint):
+class AllTags(AdminEndPoint):
+    def __init__(self, template_env, tag_service):
+        super(AllTags, self).__init__(template_env)
+        self.tag_service = tag_service
+
     def get(self, request):
         return Response("..")
 
     def post(self, request):
         return Response("..")
 
-class CreateCategory(AdminEndPoint):
+class CreateTag(AdminEndPoint):
+    def __init__(self, template_env, tag_service):
+        super(CreateTag, self).__init__(template_env)
+        self.tag_service = tag_service
+
     def get(self, request):
         return Response("...")
 

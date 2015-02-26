@@ -2,4 +2,6 @@ vendor/*
 node_modules/*
 bower_components/*
 static/*
+examples/*
+config.yaml
 *.pyc
