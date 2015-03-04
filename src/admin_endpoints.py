@@ -72,6 +72,7 @@ class Login(AdminEndPoint):
         return Response("BAD LOGIN!")
 
 
+# /admin/posts/:id
 class Post(AdminEndPoint):
     def __init__(self, template_env, post_service):
         super(Post, self).__init__(template_env)
@@ -83,6 +84,7 @@ class Post(AdminEndPoint):
     def post(self, request):
         pass
 
+# /admin/posts
 class AllPosts(AdminEndPoint):
     def __init__(self, template_env, post_service):
         super(AllPosts, self).__init__(template_env)
@@ -95,13 +97,15 @@ class AllPosts(AdminEndPoint):
         print dir(request)
         print request.form
         print "Submitted!"
+        result = self.post_service.create(request.form)
+        print result
         if(True):
             response_json = {"status": "success", "id": 2}
         else:
             response_json = {"status": "error"}
         return Response(json_encoder.encode(response_json))
 
-
+# /admin/posts/new
 class CreatePost(AdminEndPoint):
     def __init__(self, template_env, post_service):
         super(CreatePost, self).__init__(template_env)

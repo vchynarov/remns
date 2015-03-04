@@ -1,6 +1,5 @@
 from werkzeug.wrappers import Request, BaseResponse as Response
 
-
 class EndPoint(object):
     def __init__(self, template_env):
         self.template_env = template_env

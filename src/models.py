@@ -1,7 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base 
-from sqlalchemy import Table, ForeignKey, Column, Integer, String, Time, Text, Boolean
+from sqlalchemy import Table, ForeignKey, Column, Integer, String, DateTime, Text, Boolean
 from sqlalchemy.orm import relationship, backref
-from datetime import time
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -16,11 +16,31 @@ class Post(Base):
     id = Column(Integer, primary_key = True)
     title = Column(String, unique=True, nullable=False)
     web_title = Column(String, unique=True, nullable=False)
-    content = Column(Text, nullable=False)
-    created = Column(Time, nullable=False)
-    updated = Column(Time, nullable=False)
+    raw_content = Column(Text, nullable=False)
+    display_content = Column(Text, nullable=False)
+    created = Column(DateTime, nullable=False)
+    updated = Column(DateTime, nullable=False)
     published = Column(Boolean, nullable=False)
     tags = relationship('Tag', secondary=Post_Tags, backref='posts')
+
+    def __init__(self, post_dict):
+        # Need to do filtering.
+        self.title = post_dict['title']
+        self.raw_content = post_dict['content']
+        modes = {'published': True, 'draft': False}
+        self.published = modes[post_dict['mode']]
+        self.display_content = self.get_rendered_content(self.raw_content)
+        self.web_title = self.get_web_title(self.title)
+        self.created = datetime.now()
+        self.updated = datetime.now()
+
+    def get_rendered_content(self, raw_content):
+
+        return raw_content
+
+    def get_web_title(self, web_title):
+        return web_title
+
 
 class Tag(Base):
     __tablename__ = 'tags'
@@ -39,13 +59,17 @@ class ModelService(object):
         session.query(model).find(id)
 
     def update(self, id, *args):
-        session = session_maker()
+        session = self.session_maker()
 
     def delete(self, id):
-        session = session_maker()
+        session = self.session_maker()
 
-    def create(self, *args):
-        session = session_maker()
+    def create(self, args_dict):
+        session = self.session_maker()
+        new_model = self.model(**args_dict)
+        results = session.commit(new_model)
+        session.close()
+        return results
 
 
 class PostService(ModelService):
