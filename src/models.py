@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, ForeignKey, Column, Integer, String, DateTime, Text, Boolean
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
+import markdown2
 
 Base = declarative_base()
 
@@ -37,8 +38,7 @@ class Post(Base):
         self.updated = datetime.now()
 
     def get_rendered_content(self, raw_content):
-
-        return raw_content
+        return markdown2.markdown(raw_content, extras=["fenced-code-blocks"])
 
     def get_web_title(self, web_title):
         replacers = ["\"", "'", "\'", "?", ",", "#", "&", "!"]
@@ -53,8 +53,6 @@ class Tag(Base):
     __tablename__ = 'tags'
     id = Column(Integer, primary_key = True)
     name = Column(String, unique = True, nullable=False)
-
-
 
 class ModelService(object):
     def __init__(self, model, session_maker):

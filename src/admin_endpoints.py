@@ -135,7 +135,3 @@ class CreateTag(AdminEndPoint):
     def get(self, request):
         return Response("...")
 
-
-
-
-
