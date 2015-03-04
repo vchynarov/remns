@@ -12,6 +12,8 @@ Post_Tags = Table('post_tags', Base.metadata,
 )
 
 class Post(Base):
+    MAX_TOKENS = 6
+
     __tablename__ = 'posts'
     id = Column(Integer, primary_key = True)
     title = Column(String, unique=True, nullable=False)
@@ -39,7 +41,12 @@ class Post(Base):
         return raw_content
 
     def get_web_title(self, web_title):
-        return web_title
+        replacers = ["\"", "'", "\'", "?", ",", "#", "&", "!"]
+        escaped = reduce(lambda rest, x: rest.replace(x, ""), replacers, web_title)
+        # In case of double spaces.
+        tokens = filter(lambda token: token, escaped.lower().split(" ")[:self.MAX_TOKENS])
+        timestamp = datetime.now().strftime("%y-%m-%d-")
+        return timestamp + "-".join(tokens)
 
 
 class Tag(Base):
