@@ -42,35 +42,24 @@
             url: "/admin/posts",
             data: post,
             success: function(data) {
-                console.log("Succesfully submitted!");
-                console.log("Yo!");
                 console.log(data);
-
                 if(data.status === 'success') {
-
                 }
                 else if(data.status === 'error') {
-
                 }
             }
         });
     }
     $('#epiceditor-publish').click(function(evt) {
         var post = getParams('published');
-        console.dir(post);
         savePost(post);
     });
 
     $('#epiceditor-draft').click(function(evt) {
-        console.log(evt);
-        console.log(this);
+        var post = getParams('draft');
+        savePost(post);
     });
     
-    
-    var createUrl = function() {
-        return 'http://' + window.location.host + '/static';
-    };
-
     var opts = {
       clientSideStorage: false,
       basePath: '/static/epiceditor',

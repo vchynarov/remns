@@ -96,13 +96,13 @@ class AllPosts(AdminEndPoint):
     def post(self, request):
         print dir(request)
         print request.form
-        print "Submitted!"
-        result = self.post_service.create(request.form)
-        print result
-        if(True):
-            response_json = {"status": "success", "id": 2}
-        else:
+        try:
+            new_id = self.post_service.create(request.form)
+            response_json = {"status": "success", "id": new_id}
+        except Exception as e:
+            print e
             response_json = {"status": "error"}
+
         return Response(json_encoder.encode(response_json))
 
 # /admin/posts/new

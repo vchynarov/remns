@@ -56,7 +56,7 @@ class ModelService(object):
 
     def find(self, id):
         session = session_maker()
-        session.query(model).find(id)
+        return session.query(model).get(id)
 
     def update(self, id, *args):
         session = self.session_maker()
@@ -66,10 +66,12 @@ class ModelService(object):
 
     def create(self, args_dict):
         session = self.session_maker()
-        new_model = self.model(**args_dict)
-        results = session.commit(new_model)
+        new_model = self.model(args_dict)
+        session.add(new_model)
+        session.commit()
+        new_id = new_model.id # Cannot access after session closed.
         session.close()
-        return results
+        return new_id
 
 
 class PostService(ModelService):
