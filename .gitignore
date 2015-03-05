@@ -1,7 +1,7 @@
 vendor/*
 node_modules/*
 bower_components/*
-static/*
+dist/*
 examples/*
 config.yaml
 *.pyc

@@ -58,16 +58,28 @@ class ModelService(object):
     def __init__(self, model, session_maker):
         self.model = model
         self.session_maker = session_maker
+        self._current_session = None
 
     def find(self, id):
         session = session_maker()
-        return session.query(model).get(id)
+        return session.query(self.model).get(id)
 
     def update(self, id, *args):
         session = self.session_maker()
 
     def delete(self, id):
         session = self.session_maker()
+
+    def _get_session(self):
+        if not self._current_session:
+            self._current_session = self.session_maker()
+        return self._current_session
+
+    def get_all(self):
+        session = self._get_session()
+        models = session.query(self.model).order_by('id DESC').all()
+        return models
+        
 
     def create(self, args_dict):
         session = self.session_maker()

@@ -91,7 +91,9 @@ class AllPosts(AdminEndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        return Response("Yo!") 
+        posts = self.post_service.get_all()
+        template = self.template_env.get_template("all_posts.html")
+        return Response(template.render(posts=posts), mimetype="text/html")
 
     def post(self, request):
         print dir(request)
@@ -112,7 +114,7 @@ class CreatePost(AdminEndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        template = self.template_env.get_template('new_post.html')
+        template = self.template_env.get_template("new_post.html")
         return Response(template.render(), mimetype="text/html")
 
 
