@@ -25,17 +25,12 @@ class Post(Base):
     updated = Column(DateTime, nullable=False)
     published = Column(Boolean, nullable=False)
     tags = relationship('Tag', secondary=Post_Tags, backref='posts')
+    ViewModes = {'published': True, 'draft': False}
 
     def __init__(self, post_dict):
-        # Need to do filtering.
-        self.title = post_dict['title']
-        self.raw_content = post_dict['content']
-        modes = {'published': True, 'draft': False}
-        self.published = modes[post_dict['mode']]
-        self.display_content = self.get_rendered_content(self.raw_content)
-        self.web_title = self.get_web_title(self.title)
+        self._write(post_dict)
         self.created = datetime.now()
-        self.updated = datetime.now()
+        self.web_title = self.get_web_title(self.title)
 
     def get_rendered_content(self, raw_content):
         return markdown2.markdown(raw_content, extras=["fenced-code-blocks"])
@@ -48,6 +43,15 @@ class Post(Base):
         timestamp = datetime.now().strftime("%y-%m-%d-")
         return timestamp + "-".join(tokens)
 
+    def _write(self, input_dict):
+        self.title = input_dict['title']
+        self.raw_content = input_dict['content']
+        self.display_content = self.get_rendered_content(self.raw_content)
+        self.published = self.ViewModes[input_dict['mode']]
+        self.updated = datetime.now()
+
+    def update(self, put_dict):
+        self._write(put_dict)
 
 class Tag(Base):
     __tablename__ = 'tags'
@@ -61,11 +65,16 @@ class ModelService(object):
         self._current_session = None
 
     def find(self, id):
+        # need to add connection pool kind of thing.
         session = self.session_maker()
         return session.query(self.model).get(id)
 
-    def update(self, id, *args):
+    def update(self, id, args_dict):
         session = self.session_maker()
+        existing_model = self.find(id)
+        print args
+        return existing_model
+
 
     def delete(self, id):
         session = self.session_maker()

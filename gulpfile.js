@@ -34,6 +34,9 @@ gulp.task('build-admin-js', function() {
     return gulp.src(remnsPaths)
         .pipe(concat('utils.js'))
         .pipe(uglify())
+        .on('error', function(e) {
+            console.log('Invalid JS file format.');
+        })
         .pipe(gulp.dest('dist'));
 
 });

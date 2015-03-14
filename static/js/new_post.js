@@ -8,31 +8,36 @@ remns.init = function() {
         return post;
     };
 
-    var savePost = function(post) {
-        $.ajax({
-            type: "POST",
-            url: "/admin/posts",
-            data: post,
-            success: function(data) {
-                console.log(data);
-                if(data.status === 'success') {
+    var postService = new (function() {
+       var request = function(method, post) {
+           $.ajax({
+                type: method,
+                url: "/admin/posts",
+                data: post,
+                success: function(data) {
+                    console.log(data);
+                    if(data.status === 'success') {
+                    }
+                    else if(data.status === 'error') {
+                    }
                 }
-                else if(data.status === 'error') {
-                }
-            }
-        });
-    }
+            });
+        };
+        this.create = function(post) {
+            request('POST', post);
+        };
+        this.update = function(post) {
+            request('PUT', post);
+        };
+    })();
 
-    $('#epiceditor-publish').click(function(evt) {
-        var post = getParams('published');
-        savePost(post);
+    $('.post-submit').click(function(evt) {
+        console.log(evt);
+        var button = evt.target;
+        console.log(button.getAttribute('data-state'));
+        console.log(button.getAttribute('data-mode'));
     });
 
-    $('#epiceditor-draft').click(function(evt) {
-        var post = getParams('draft');
-        savePost(post);
-    });
-    
     var opts = {
       clientSideStorage: false,
       basePath: '/static/epiceditor',

@@ -102,6 +102,9 @@ class AllPosts(AdminEndPoint):
         template = self.template_env.get_template("all_posts.html")
         return Response(template.render(posts=posts), mimetype="text/html")
 
+    def put(self, request):
+        print dir(request)
+
     def post(self, request):
         print dir(request)
         print request.form

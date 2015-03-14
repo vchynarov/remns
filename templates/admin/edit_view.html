@@ -11,16 +11,41 @@
 
     <div id="epiceditor"></div>
 
-  <a href="javascript:void(0)" id="epiceditor-publish" class="fluid ui button">
-    Publish
-  </a>
-  <a href="javascript:void(0)" id="epiceditor-draft" class="fluid ui button">
-    Save as Draft 
-  </a>
+  {% if post %}
+    {% if post.published %}
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-mode="update" data-state="published">
+        Update 
+    </a>
+    {% else %}
+        {# Existing post but only in draft form. #}
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-mode="update" data-state="draft">
+        Update Draft
+    </a>
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-mode="update" data-state="published">
+       Publish
+    </a>
+    {% endif %}
+  {% else %}
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-mode="create" data-state="draft">
+       Save Draft
+    </a>
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-mode="create" data-state="published">
+       Publish
+    </a>
+  {% endif %}
+  
 </form>
 
 <textarea id="initial-content" hidden="true" >
-{{ post.raw_content  }}
+{% if post %}
+    {{ post.raw_content }}
+{% endif %}
 </textarea>
+
 <script src="/static/utils.js"></script>
 {% endblock %}
