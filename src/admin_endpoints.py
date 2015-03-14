@@ -79,7 +79,14 @@ class Post(AdminEndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        return Response("yoo")
+        template = self.template_env.get_template("edit_view.html")
+        print request.path_params
+        saved_post = self.post_service.find(request.path_params['id'])
+        values = {
+            "title_placeholder": saved_post.title,
+            "post": saved_post
+        }
+        return Response(template.render(values), mimetype="text/html")
 
     def post(self, request):
         pass
@@ -114,8 +121,11 @@ class CreatePost(AdminEndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        template = self.template_env.get_template("new_post.html")
-        return Response(template.render(), mimetype="text/html")
+        template = self.template_env.get_template("edit_view.html")
+        values = {
+            "title_placeholder": "Post title"
+        }
+        return Response(template.render(values), mimetype="text/html")
 
 
 class AllTags(AdminEndPoint):

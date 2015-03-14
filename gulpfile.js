@@ -10,6 +10,10 @@ var build_tasks = [
 ];
 
 gulp.task('default', build_tasks);
+
+gulp.task('watch', function() {
+    gulp.watch(remnsPaths, ['build-admin-js']);
+});
  
 var adminPaths = {
     'css' : [
@@ -19,11 +23,15 @@ var adminPaths = {
         'bower_components/jquery/dist/jquery.min.js',
         'bower_components/epiceditor/epiceditor/js/epiceditor.js',
         'bower_components/semantic-ui/dist/semantic.js'
-     ]
+     ],
 };
 
+var remnsPaths = [
+    'static/js/*.js'
+];
+
 gulp.task('build-admin-js', function() {
-    return gulp.src('static/js/*.js')
+    return gulp.src(remnsPaths)
         .pipe(concat('utils.js'))
         .pipe(uglify())
         .pipe(gulp.dest('dist'));

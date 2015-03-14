@@ -1,15 +1,11 @@
 {% extends "base.html" %}
 {% block main %}
 
-<h2>
-    Create a new post!
-</h2>
-
 <form id="post-form" class="ui form" action="/admin/posts" method="post">
 
     <div class="field">
       <label>Title</label>
-      <input name="post-title" placeholder="Enter in your posts title" type="text">
+      <input name="post-title" placeholder="{{ title_placeholder }}" type="text">
     </div>
 
 
@@ -23,5 +19,8 @@
   </a>
 </form>
 
+<textarea id="initial-content" hidden="true" >
+{{ post.raw_content  }}
+</textarea>
 <script src="/static/utils.js"></script>
 {% endblock %}

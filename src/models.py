@@ -61,7 +61,7 @@ class ModelService(object):
         self._current_session = None
 
     def find(self, id):
-        session = session_maker()
+        session = self.session_maker()
         return session.query(self.model).get(id)
 
     def update(self, id, *args):

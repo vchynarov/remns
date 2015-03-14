@@ -1,4 +1,5 @@
-(function() {    // mode is either published / draft
+remns = {};
+remns.init = function() {
     var getParams = function(mode) {
         var post = {};
         post.title = $('[name=post-title]').val();
@@ -21,6 +22,7 @@
             }
         });
     }
+
     $('#epiceditor-publish').click(function(evt) {
         var post = getParams('published');
         savePost(post);
@@ -34,6 +36,7 @@
     var opts = {
       clientSideStorage: false,
       basePath: '/static/epiceditor',
+      textarea: 'initial-content',
       theme: {
         base: '/base/epiceditor.css',
         preview: '/preview/preview-dark.css',
@@ -44,6 +47,9 @@
         maxHeight: 500
       }
     }
-    var editor = new EpicEditor(opts).load();
-})();
 
+    var editor = new EpicEditor(opts).load();
+    return editor
+}
+remns.editor = remns.init();
+   
