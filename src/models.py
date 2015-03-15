@@ -66,37 +66,37 @@ class ModelService(object):
 
     def find(self, id):
         # need to add connection pool kind of thing.
-        session = self.session_maker()
+        session = self._get_session()
         return session.query(self.model).get(id)
 
     def update(self, id, args_dict):
-        session = self.session_maker()
+        session = self._get_session()
         existing_model = self.find(id)
-        print args
-        return existing_model
+        existing_model.update(args_dict)
+        session.add(existing_model)
+        session.commit()
 
+    def _get_session(self):
+        pool = None
+        if not self._current_session:
+            self._current_session = self.session_maker()
+
+        return self._current_session
 
     def delete(self, id):
         session = self.session_maker()
-
-    def _get_session(self):
-        if not self._current_session:
-            self._current_session = self.session_maker()
-        return self._current_session
 
     def get_all(self):
         session = self._get_session()
         models = session.query(self.model).order_by('id DESC').all()
         return models
         
-
     def create(self, args_dict):
-        session = self.session_maker()
+        session = self._get_session()
         new_model = self.model(args_dict)
         session.add(new_model)
         session.commit()
         new_id = new_model.id # Cannot access after session closed.
-        session.close()
         return new_id
 
 

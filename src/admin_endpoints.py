@@ -91,6 +91,20 @@ class Post(AdminEndPoint):
     def post(self, request):
         pass
 
+    def put(self, request):
+        print "update!"
+        print request.form
+        print request.path_params
+        try:
+            self.post_service.update(request.path_params["id"], request.form)
+            response_json = {"status": "success"}
+
+        except Exception as e:
+            print e
+            response_json = {"status": "error"}
+
+        return Response(json_encoder.encode(response_json))
+
 # /admin/posts
 class AllPosts(AdminEndPoint):
     def __init__(self, template_env, post_service):
@@ -102,11 +116,9 @@ class AllPosts(AdminEndPoint):
         template = self.template_env.get_template("all_posts.html")
         return Response(template.render(posts=posts), mimetype="text/html")
 
-    def put(self, request):
-        print dir(request)
-
+    
     def post(self, request):
-        print dir(request)
+        print "create!"
         print request.form
         try:
             new_id = self.post_service.create(request.form)
