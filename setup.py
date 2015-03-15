@@ -16,7 +16,7 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.1.0.dev1',
 
-    description='An elegant Python blogging engine.'
+    description='An elegant Python blogging engine.',
     long_description='An elegant Python blogging engine based on Werkzeug and SQLAlchemy',
 
 
@@ -25,7 +25,7 @@ setup(
 
     # Author details
     author='Viktor Chynarov',
-    author_email='viktor.chynarov@gmail.com'
+    author_email='viktor.chynarov@gmail.com',
 
     # Choose your license
     license='MIT',
@@ -91,7 +91,7 @@ setup(
     # need to place data files outside of your packages.
     # see http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-    data_files=[('my_data', ['data/data_file'])],
+#    data_files=[('my_data', ['data/data_file'])],
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
