@@ -1,4 +1,5 @@
 remns = {};
+remns.post_id = null; // If there is an existing post.
 remns.init = function() {
     var getParams = function(mode) {
         var post = {};
@@ -9,13 +10,17 @@ remns.init = function() {
     };
 
     var postService = new (function() {
-       var request = function(method, post) {
+       var request = function(method, post, id) {
+           var url = '/admin/posts/';
+           if(id) {
+             url = '/admin/posts/' + id + '/';
+           }
            $.ajax({
                 type: method,
-                url: "/admin/posts",
+                url: url,
                 data: post,
                 success: function(data) {
-                    console.log(data);
+                    window.location.replace("/admin/posts/");
                     if(data.status === 'success') {
                     }
                     else if(data.status === 'error') {
@@ -23,19 +28,23 @@ remns.init = function() {
                 }
             });
         };
-        this.create = function(post) {
-            request('POST', post);
+        this.create = function(post, id) {
+            request('POST', post, id);
         };
-        this.update = function(post) {
-            request('PUT', post);
+        this.update = function(post, id) {
+            request('PUT', post, id);
         };
     })();
 
+
+
     $('.post-submit').click(function(evt) {
-        console.log(evt);
         var button = evt.target;
-        console.log(button.getAttribute('data-state'));
-        console.log(button.getAttribute('data-mode'));
+        var action = button.getAttribute('data-action');
+        var mode = button.getAttribute('data-mode');
+        var post = getParams(mode);
+        console.log(remns.post_id)
+        postService[action](post, remns.post_id);
     });
 
     var opts = {
