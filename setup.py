@@ -30,6 +30,8 @@ setup(
     # Choose your license
     license='MIT',
 
+    scripts=['bin/remns'],
+
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
