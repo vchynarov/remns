@@ -1,24 +1,24 @@
 #! /usr/bin/env python
-print "Correct python!"
-
 import os
 import argparse
 import yaml
 
-# need to copy templates and shit. 
-
-app_folder = 'yog'
+# Get blogname
+parser = argparse.ArgumentParser(description='Initialize a new remns blog.')
+parser.add_argument('blog', type=str,
+                   help='Name of the new blog directory')
+args = parser.parse_args()
+app_folder = args.blog
+print "Initializing new remns --- {0}".format(app_folder)
 
 os.mkdir(app_folder)
 os.mkdir(os.path.join(app_folder, 'static'))
 os.mkdir(os.path.join(app_folder, 'static', 'admin'))
 os.mkdir(os.path.join(app_folder, 'templates',))
 os.mkdir(os.path.join(app_folder, 'templates', 'admin'))
+print "Finished copying files."
+print "Please check the README.md for instructions on how to set up your blog."
 
-DEFAULT_GITIGNORE = [
-    'static/admin',
-    'templates/admin',
-]
 config = {
     "templates": {
         "single_post": "templates/single_post.html",
@@ -30,20 +30,24 @@ config = {
         "author": "FirstName LastName"
     },
     "db": {
-        "engine": "postgresql",
-        "driver": "psycopg2",
-        "user": "postgres",
-        "password": "postgres",
-        "host": "localhost",
-        "name": "remns"
+        "engine": None, 
+        "driver": None,
+        "user": None,
+        "password": None,
+        "host": None,
+        "name": None 
     }
 }
+app = """# This file should NOT be edited!
+from remns.app import app
+
+
+"""
+with open(os.path.join(app_folder, "main.py"), "w") as mainfile:
+    mainfile.write(app)
+#    mainfile.writelines(map(lambda x: x+'\n', app
 
 # default configuration file
 with open(os.path.join(app_folder, 'config.yaml'), 'w') as config_file:
     yaml.dump(config, config_file, default_flow_style=False)
 
-# default .gitignore
-with open(os.path.join(app_folder, '.gitignore'), 'w') as gitignore:
-    # Writelines doesn't support delimiters. 
-    gitignore.writelines(map(lambda x: x+'\n', DEFAULT_GITIGNORE))
