@@ -2,5 +2,5 @@
 # Contain styling and JS logic for the admin portion.
 include dist/*.js
 include dist/*.css
-include epiceditor/*
 include templates/admin/*.html
+include DESCRIPTION.rst
