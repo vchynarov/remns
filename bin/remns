@@ -39,7 +39,8 @@ config = {
     }
 }
 app = """# This file should NOT be edited!
-from remns.app import app
+from remns import main
+app = main.app
 
 
 """
