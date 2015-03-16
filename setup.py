@@ -17,7 +17,7 @@ setup(
     version='0.1.0.dev1',
 
     description='An elegant Python blogging engine.',
-    long_description='An elegant Python blogging engine based on Werkzeug and SQLAlchemy',
+    scripts=['bin/remns'],
 
 
     # The project's main homepage.
@@ -29,8 +29,6 @@ setup(
 
     # Choose your license
     license='MIT',
-
-    scripts=['bin/remns'],
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -72,7 +70,11 @@ setup(
     install_requires=[
         'Jinja2',
         'SQLALchemy',
-        'Werkzeug'],
+        'Werkzeug',
+        'PyYAML',
+        'MarkupSafe',
+        'markdown2',
+        'Pygments'],
 
     # List additional groups of dependencies here (e.g. development dependencies).
     # You can install these using the following syntax, for example:

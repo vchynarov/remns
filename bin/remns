@@ -1,3 +1,49 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
+print "Correct python!"
 
-print "Let's set up Python!"
+import os
+import argparse
+import yaml
+
+# need to copy templates and shit. 
+
+app_folder = 'yog'
+
+os.mkdir(app_folder)
+os.mkdir(os.path.join(app_folder, 'static'))
+os.mkdir(os.path.join(app_folder, 'static', 'admin'))
+os.mkdir(os.path.join(app_folder, 'templates',))
+os.mkdir(os.path.join(app_folder, 'templates', 'admin'))
+
+DEFAULT_GITIGNORE = [
+    'static/admin',
+    'templates/admin',
+]
+config = {
+    "templates": {
+        "single_post": "templates/single_post.html",
+        "multi_post": "templates/multi_post.html"
+    },
+    "admin": {
+        "username": "Username",
+        "password": "Password",
+        "author": "FirstName LastName"
+    },
+    "db": {
+        "engine": "postgresql",
+        "driver": "psycopg2",
+        "user": "postgres",
+        "password": "postgres",
+        "host": "localhost",
+        "name": "remns"
+    }
+}
+
+# default configuration file
+with open(os.path.join(app_folder, 'config.yaml'), 'w') as config_file:
+    yaml.dump(config, config_file, default_flow_style=False)
+
+# default .gitignore
+with open(os.path.join(app_folder, '.gitignore'), 'w') as gitignore:
+    # Writelines doesn't support delimiters. 
+    gitignore.writelines(map(lambda x: x+'\n', DEFAULT_GITIGNORE))
