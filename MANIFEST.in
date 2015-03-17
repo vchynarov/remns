@@ -1,6 +1,0 @@
-# These are admin files in dist that are compiled by Gulp.
-# Contain styling and JS logic for the admin portion.
-include dist/*.js
-include dist/*.css
-include epiceditor/*
-include templates/admin/*.html
