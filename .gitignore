@@ -6,4 +6,5 @@ examples/*
 config.yaml
 *.pyc
 remns.egg-info/*
+remns/dist/*
 build/*

@@ -2,6 +2,11 @@
 import os
 import argparse
 import yaml
+import pkgutil
+import itertools
+import remns
+
+FILES = 2
 
 # Get blogname
 parser = argparse.ArgumentParser(description='Initialize a new remns blog.')
@@ -11,13 +16,40 @@ args = parser.parse_args()
 app_folder = args.blog
 print "Initializing new remns --- {0}".format(app_folder)
 
-os.mkdir(app_folder)
-os.mkdir(os.path.join(app_folder, 'static'))
-os.mkdir(os.path.join(app_folder, 'static', 'admin'))
-os.mkdir(os.path.join(app_folder, 'templates',))
-os.mkdir(os.path.join(app_folder, 'templates', 'admin'))
+
+def create_directories(dist_dir, walk_paths):
+    full_dirs = map(lambda wp: wp[0], walk_paths[1:]) # first file is dist dir
+    partial_dirs = map(lambda p: p.split(dist_dir)[1], full_dirs)
+    os.mkdir(app_folder)
+    for partial_dir in partial_dirs:
+        # because of dirty splitting
+        os.mkdir(os.path.join(app_folder, partial_dir.lstrip('/')))
+    
+
+def load_data():
+    remns_dir = os.path.dirname(remns.__file__)
+    dist_dir = os.path.join(remns_dir, 'dist')
+    walk_paths = list(os.walk(dist_dir))
+    create_directories(dist_dir, walk_paths)
+    load_data_files(remns_dir, walk_paths)
+
+def get_data_files(remns_dir, walk_paths):
+    main = filter(lambda walkdir: walkdir[FILES], walk_paths)
+    paths = list(itertools.chain.from_iterable(map(lambda walkdir: map(lambda f: os.path.join(walkdir[0], f), walkdir[FILES]), main)))
+    return map(lambda p: p.lstrip(remns_dir), paths)
+
+def load_data_files(remns_dir, walk_paths):
+    data_files = get_data_files(remns_dir, walk_paths)
+    for data_file in data_files:
+        # get rid of 'dist' prefix
+        local_name = '/'.join(data_file.split('/')[1:]) 
+        with open(os.path.join(app_folder, local_name), 'w') as outfile:
+            outfile.write(pkgutil.get_data('remns', data_file))
+
+load_data()
 print "Finished copying files."
 print "Please check the README.md for instructions on how to set up your blog."
+
 
 config = {
     "templates": {

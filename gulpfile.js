@@ -9,6 +9,8 @@ var build_tasks = [
   'build-admin-js'
 ];
 
+var distdir = 'remns/dist';
+
 gulp.task('default', build_tasks);
 
 gulp.task('watch', function() {
@@ -37,23 +39,23 @@ gulp.task('build-admin-js', function() {
         .on('error', function(e) {
             console.log('Invalid JS file format.');
         })
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest(distdir));
 
 });
 // epiceditor requires 'explicity' styling by providing links to CSS files.
 gulp.task('build-epiceditor', function() {
     return gulp.src('bower_components/epiceditor/epiceditor/themes/**/*.css')
-        .pipe(gulp.dest('dist/epiceditor'));
+        .pipe(gulp.dest(distdir + '/epiceditor'));
 });
 
 gulp.task('build-vendor-css', function() {
     return gulp.src(adminPaths.css)
         .pipe(concat('admin.css'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest(distdir));
 });
 
 gulp.task('build-vendor-js', function() {
     return gulp.src(adminPaths.js)
         .pipe(concat('admin.js'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest(distdir));
 });
