@@ -101,17 +101,56 @@ class TestPostServiceWrites(object):
         assert retrieved.id == self.created_draft_id
         assert retrieved.published
 
-# class TestTagService(object):
-#     def test_create_tag(self):
-#         assert False
-#
-#     def test_rename_tag(self):
-#         assert False
-#
-#     def test_delete_tag(self):
-#         assert False
-#
-# class TestAdminController(object):
-#     def test_authentication(self):
-#         assert False
-#
+    def test_delete_post(self):
+        post_service = self.get_post_service()
+        test_post = {
+            "title": "Post to be deleted",
+            "content": "Some more content",
+            "mode": "published"
+        }
+        item = post_service.create(test_post)
+        post_service.delete(item)
+        deleted_post = post_service.find(item)
+        assert deleted_post is None
+        pass
+
+class TestTagService(object):
+
+    def get_tag_service(self):
+        if '_tagservice' in dir(self):
+            return self._tagservice
+        else:
+            self._tagservce = TagService(session())
+            return self._tagservce
+
+    def test_create_tag(self):
+        tag_service = self.get_tag_service()
+        test_tag = {
+            "name": "First Tag"
+        }
+        item = tag_service.create(test_tag)
+        retrieved = tag_service.find(item)
+        self.created_id = item
+        assert retrieved.name == test_tag["name"]
+        assert approx_same(retrieved.created, retrieved.updated)
+
+    def test_rename_tag(self):
+        tag_service = self.get_tag_service()
+        test_tag = {
+            "name": "Unupdated"
+        }
+        item = tag_service.create(test_tag)
+        tag_service.update(item, {"name": "updated_tag"})
+        new_item = tag_service.find(item)
+        assert new_item.name == "updated_tag"
+
+    def test_delete_tag(self):
+        tag_service = self.get_tag_service()
+        test_tag = {
+            "name": "to be deleted"
+        }
+        item = tag_service.create(test_tag)
+        tag_service.delete(item)
+        deleted_tag = tag_service.find(item)
+        assert deleted_tag is None
+

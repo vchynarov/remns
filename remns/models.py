@@ -57,7 +57,20 @@ class Tag(Base):
     __tablename__ = 'tags'
     id = Column(Integer, primary_key = True)
     name = Column(String, unique = True, nullable=False)
+    created = Column(DateTime, nullable=False)
+    updated = Column(DateTime, nullable=False)
 
+    def __init__(self, post_dict):
+        self._write(post_dict)
+        self.created = datetime.now()
+
+    def update(self, put_dict):
+        self._write(put_dict)
+
+    def _write(self, input_dict):
+        self.name = input_dict["name"]
+        self.updated = datetime.now()
+        
 class ModelService(object):
     def __init__(self, model, session_maker):
         self.model = model
@@ -84,7 +97,9 @@ class ModelService(object):
         return self._current_session
 
     def delete(self, id):
-        session = self.session_maker()
+        session = self._get_session()
+        session.delete(self.find(id))
+        session.commit()
 
     def get_all(self):
         session = self._get_session()

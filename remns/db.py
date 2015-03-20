@@ -9,6 +9,10 @@ def get_session_maker():
     Session.configure(bind=engine)
     return Session
 
-if __name__ == "__main__":
+def reset():
+    Base.metadata.drop_all(engine)
     engine = create_engine(config.DB_CONN_STRING)
     Base.metadata.create_all(engine, checkfirst=True)
+
+if __name__ == "__main__":
+    reset()
