@@ -47,16 +47,16 @@ class TestPostServiceWrites(object):
             "content": "Here is some content",
             "mode": "draft"
         }
-        item = post_service.create(test_post)
-        retrieved = post_service.find(item)
-        self.created_draft_id = item
+        model_id = post_service.create(test_post)
+        retrieved = post_service.find(model_id)
+        self.created_draft_id = model_id
 
         assert retrieved.title == "My first test post."
         assert approx_same(retrieved.created, retrieved.updated) 
         assert "my-first-test-post" in retrieved.web_title
         assert retrieved.raw_content == test_post['content']
         assert retrieved.display_content == '<p>Here is some content</p>\n' 
-        assert retrieved.id == item
+        assert retrieved.id == model_id
         assert not retrieved.published
 
         self.t_update_basic_draft()
@@ -70,14 +70,14 @@ class TestPostServiceWrites(object):
             "mode": "published"
         }
 
-        item = post_service.create(test_post)
-        retrieved = post_service.find(item)
+        model_id = post_service.create(test_post)
+        retrieved = post_service.find(model_id)
         assert approx_same(retrieved.created, retrieved.updated)
         assert retrieved.title == test_post['title']
         assert "my-second-test-post" in retrieved.web_title
         assert retrieved.raw_content == test_post['content']
         assert retrieved.display_content == '<p>Some more content</p>\n' 
-        assert retrieved.id == item
+        assert retrieved.id == model_id
         assert retrieved.published
     
     # secondary test
@@ -108,9 +108,9 @@ class TestPostServiceWrites(object):
             "content": "Some more content",
             "mode": "published"
         }
-        item = post_service.create(test_post)
-        post_service.delete(item)
-        deleted_post = post_service.find(item)
+        model_id = post_service.create(test_post)
+        post_service.delete(model_id)
+        deleted_post = post_service.find(model_id)
         assert deleted_post is None
         pass
 
@@ -128,29 +128,44 @@ class TestTagService(object):
         test_tag = {
             "name": "First Tag"
         }
-        item = tag_service.create(test_tag)
-        retrieved = tag_service.find(item)
-        self.created_id = item
+        model_id = tag_service.create(test_tag)
+        retrieved = tag_service.find(model_id)
+        self.created_id = model_id
         assert retrieved.name == test_tag["name"]
         assert approx_same(retrieved.created, retrieved.updated)
+
+    def test_update_tag(self):
+        tag_service = self.get_tag_service()
+        test_tag = {
+            "name": "First Tag"
+        }
+        model_id = tag_service.create(test_tag)
+        # time for updates
+        time.sleep(1)
+        tag_service.update(model_id, {"name": "Updated Tag Name"})
+        retrieved = tag_service.find(model_id)
+        assert retrieved.id == model_id
+        assert retrieved.name == "Updated Tag Name"
+        assert not approx_same(retrieved.created, retrieved.updated)
+        
 
     def test_rename_tag(self):
         tag_service = self.get_tag_service()
         test_tag = {
             "name": "Unupdated"
         }
-        item = tag_service.create(test_tag)
-        tag_service.update(item, {"name": "updated_tag"})
-        new_item = tag_service.find(item)
-        assert new_item.name == "updated_tag"
+        model_id = tag_service.create(test_tag)
+        tag_service.update(model_id, {"name": "updated_tag"})
+        new_model_id = tag_service.find(model_id)
+        assert new_model_id.name == "updated_tag"
 
     def test_delete_tag(self):
         tag_service = self.get_tag_service()
         test_tag = {
             "name": "to be deleted"
         }
-        item = tag_service.create(test_tag)
-        tag_service.delete(item)
-        deleted_tag = tag_service.find(item)
+        model_id = tag_service.create(test_tag)
+        tag_service.delete(model_id)
+        deleted_tag = tag_service.find(model_id)
         assert deleted_tag is None
 

@@ -58,17 +58,12 @@ class Login(AdminEndPoint):
         
             submitted_user = request.form['admin-username']
             submitted_password = request.form['admin-password']
-            print submitted_password
-            print submitted_user
-            print self.username
-            print self.password
             if submitted_user == self.username and submitted_password == self.password:
                 cookie = generate_cookie()
                 session_cookies[cookie] = int(time.time())
                 response = redirect(request.path)
                 response.set_cookie('remns_session_id', cookie)
                 return response
-
         return Response("BAD LOGIN!")
 
 
@@ -88,13 +83,7 @@ class Post(AdminEndPoint):
         }
         return Response(template.render(values), mimetype="text/html")
 
-    def post(self, request):
-        pass
-
     def put(self, request):
-        print "update!"
-        print request.form
-        print request.path_params
         try:
             self.post_service.update(request.path_params["id"], request.form)
             response_json = {"status": "success"}
@@ -118,8 +107,6 @@ class AllPosts(AdminEndPoint):
 
     
     def post(self, request):
-        print "create!"
-        print request.form
         try:
             new_id = self.post_service.create(request.form)
             response_json = {"status": "success", "id": new_id}
