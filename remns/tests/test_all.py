@@ -59,8 +59,6 @@ class TestPostServiceWrites(object):
         assert retrieved.id == model_id
         assert not retrieved.published
 
-        self.t_update_basic_draft()
-
     # uses Global to test updates
     def test_create_basic_published(self):
         post_service = self.get_post_service()
@@ -81,24 +79,31 @@ class TestPostServiceWrites(object):
         assert retrieved.published
     
     # secondary test
-    def t_update_basic_draft(self):
+    def test_update_basic_draft(self):
         post_service = self.get_post_service()
         test_post = {
-            "title": "updated first post",
-            "content": "updated first content",
+            "title": "To be updated post",
+            "content": "Initial content",
+            "mode": "draft"
+        }
+        updates = {
+            "title": "Updated title",
+            "content": "Updated content",
             "mode": "published"
         }
 
-        time.sleep(0.05) # give some time for updates
-        post_service.update(self.created_draft_id, test_post)
-        retrieved = post_service.find(self.created_draft_id)
-        assert retrieved.title == test_post['title']
+        model_id = post_service.create(test_post)
+        # time for updates
+        time.sleep(0.1)
+        post_service.update(model_id, updates)
+        retrieved = post_service.find(model_id)
+        assert retrieved.id == model_id
         # we title should not change!
-        assert "my-first-test-post" in retrieved.web_title
+        assert "to-be-updated-post" in retrieved.web_title
+        assert retrieved.title == "Updated title"
         assert not approx_same(retrieved.created, retrieved.updated)
-        assert retrieved.raw_content == test_post['content']
-        assert retrieved.display_content == '<p>updated first content</p>\n' 
-        assert retrieved.id == self.created_draft_id
+        assert retrieved.raw_content == updates['content']
+        assert retrieved.display_content == '<p>Updated content</p>\n' 
         assert retrieved.published
 
     def test_delete_post(self):
@@ -141,7 +146,7 @@ class TestTagService(object):
         }
         model_id = tag_service.create(test_tag)
         # time for updates
-        time.sleep(1)
+        time.sleep(0.1)
         tag_service.update(model_id, {"name": "Updated Tag Name"})
         retrieved = tag_service.find(model_id)
         assert retrieved.id == model_id
