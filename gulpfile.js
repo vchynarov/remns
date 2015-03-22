@@ -9,7 +9,7 @@ var build_tasks = [
   'build-admin-js'
 ];
 
-var distdir = 'remns/dist';
+var distdir = 'dist/static';
 
 gulp.task('default', build_tasks);
 

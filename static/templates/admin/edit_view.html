@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block main %}
+
+<form id="post-form" class="ui form" action="/admin/posts" method="post">
+
+    <div class="field">
+      <label>Title</label>
+      <input name="post-title" value="{{ title_placeholder }}" type="text">
+    </div>
+
+
+    <div id="epiceditor"></div>
+
+  {% if post %}
+    {% if post.published %}
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-action="update" data-mode="published">
+        Update 
+    </a>
+    {% else %}
+        {# Existing post but only in draft form. #}
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-action="update" data-mode="draft">
+        Update Draft
+    </a>
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-action="update" data-mode="published">
+       Publish
+    </a>
+    {% endif %}
+  {% else %}
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-action="create" data-mode="draft">
+       Save Draft
+    </a>
+    <a href="javascript:void(0)"  class="fluid ui button post-submit"
+       data-action="create" data-mode="published">
+       Publish
+    </a>
+  {% endif %}
+  
+</form>
+
+<textarea id="initial-content" hidden="true" >
+{% if post %}
+    {{ post.raw_content }}
+{% endif %}
+</textarea>
+
+<script src="/static/utils.js"></script>
+{% if post %}
+<script>
+    remns.post_id = {{ post.id }}
+</script>
+{% endif %}
+{% endblock %}

@@ -91,10 +91,10 @@ setup(
             'dist/static/admin/epiceditor/editor/epic-light.css',
             'dist/static/admin/admin.js',
             'dist/static/admin/admin.css',
-            'dist/templates/admin/edit_view.html',
-            'dist/templates/admin/base.html',
-            'dist/templates/admin/all_posts.html',
-            'dist/templates/admin/login.html'
+            'templates/admin/edit_view.html',
+            'templates/admin/base.html',
+            'templates/admin/all_posts.html',
+            'templates/admin/login.html'
         ]
     }
 )
