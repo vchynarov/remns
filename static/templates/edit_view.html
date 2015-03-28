@@ -7,6 +7,12 @@
       <label>Title</label>
       <input name="post-title" value="{{ title_placeholder }}" type="text">
     </div>
+        <h3>
+            Select tags:
+        </h3>
+
+        <input type="text" id="add-tags">
+
 
 
     <div id="epiceditor"></div>
@@ -47,10 +53,13 @@
 {% endif %}
 </textarea>
 
-<script src="/static/utils.js"></script>
+<script src="/static/admin/utils.js"></script>
 {% if post %}
 <script>
-    remns.post_id = {{ post.id }}
+    $(function(){
+        remns.editor=remns.init() 
+        remns.post_id = {{ post.id }}
+    });
 </script>
 {% endif %}
 {% endblock %}

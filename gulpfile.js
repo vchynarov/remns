@@ -28,10 +28,12 @@ gulp.task('watch', function() {
 var bowerPaths = {
     'css' : [
         'bower_components/semantic-ui/dist/semantic.min.css',
+        'bower_components/selectize/dist/css/selectize.css'
      ],
     'js' : [
-        'bower_components/jquery/dist/jquery.min.js',
+        'bower_components/jquery/dist/jquery.js',
         'bower_components/epiceditor/epiceditor/js/epiceditor.js',
+        'bower_components/selectize/dist/js/standalone/selectize.min.js',
         'bower_components/semantic-ui/dist/semantic.js'
      ]
 };
