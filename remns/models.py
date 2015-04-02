@@ -115,6 +115,15 @@ class ModelService(object):
         return new_id
 
 
+class TaggingService(object):
+    def __init__(self, post_service, tag_service):
+        self.post_service = post_service
+        self.tag_service = tag_service
+
+    def set_tags(self, post_id, tag_ids):
+        print post_id
+        print tag_ids
+
 class PostService(ModelService):
     def __init__(self, session_maker):
         super(PostService, self).__init__(Post, session_maker)
@@ -122,14 +131,16 @@ class PostService(ModelService):
     def get_posts_by_date(self, year, month, day, *tags):
         pass
 
-    def add_tags_to_post(self, id, tag_ids ):
-        pass
-
-    def remove_tags_from_post(self, id, tag_ids):
-        pass
-        
         
 class TagService(ModelService):
     def __init__(self, session_maker):
         super(TagService, self).__init__(Tag, session_maker)
 
+    def initialize_tags(self, submitted_tags):
+        """
+            Returns an array of integers of newly created tags!
+        """
+        new_tags = filter(lambda tag: tag["status"] == "created", submitted_tags)
+        existing_ids = [int(tag["value"]) for tag in  filter(lambda tag: tag["status"] == "existing", submitted_tags)]
+        new_ids = [self.create({"name": new_tag["value"]}) for new_tag in new_tags]
+        return new_ids + existing_ids

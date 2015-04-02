@@ -69,13 +69,15 @@ class Login(AdminEndPoint):
 
 # /admin/posts/:id
 class Post(AdminEndPoint):
-    def __init__(self, template_env, post_service):
+    def __init__(self, template_env, post_service, tag_service, tagging_service):
         super(Post, self).__init__(template_env)
         self.post_service = post_service
+        self.tag_service = tag_service
+        self.tagging_service = tagging_service
+
 
     def get(self, request):
         template = self.template_env.get_template("edit_view.html")
-        print request.path_params
         saved_post = self.post_service.find(request.path_params['id'])
         values = {
             "title_placeholder": saved_post.title,
@@ -85,7 +87,9 @@ class Post(AdminEndPoint):
 
     def put(self, request):
         try:
-            self.post_service.update(request.path_params["id"], request.form)
+            tag_ids = self.tag_service.initialize_tags(request.data["tags"])
+            self.post_service.update(request.path_params["id"], request.data)
+            self.tagging_service.set_tags(request.path_params["id"], tag_ids)
             response_json = {"status": "success"}
 
         except Exception as e:
@@ -96,9 +100,11 @@ class Post(AdminEndPoint):
 
 # /admin/posts
 class AllPosts(AdminEndPoint):
-    def __init__(self, template_env, post_service):
+    def __init__(self, template_env, post_service, tag_service, tagging_service):
         super(AllPosts, self).__init__(template_env)
         self.post_service = post_service
+        self.tag_service = tag_service
+        self.tagging_service = tagging_service
 
     def get(self, request):
         posts = self.post_service.get_all()
@@ -108,7 +114,9 @@ class AllPosts(AdminEndPoint):
     
     def post(self, request):
         try:
-            new_id = self.post_service.create(request.form)
+            print "Created post!"
+            print request.data
+            new_id = self.post_service.create(request.data)
             response_json = {"status": "success", "id": new_id}
         except Exception as e:
             print e
@@ -137,15 +145,3 @@ class AllTags(AdminEndPoint):
 
     def get(self, request):
         return Response("..")
-
-    def post(self, request):
-        return Response("..")
-
-class CreateTag(AdminEndPoint):
-    def __init__(self, template_env, tag_service):
-        super(CreateTag, self).__init__(template_env)
-        self.tag_service = tag_service
-
-    def get(self, request):
-        return Response("...")
-
