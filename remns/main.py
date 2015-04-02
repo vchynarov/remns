@@ -16,7 +16,7 @@ SessionMaker = get_session_maker()
 
 tag_service = TagService(SessionMaker)
 post_service = PostService(SessionMaker)
-tagging_service = TaggingService(post_service, tag_service)
+tagging_service = TaggingService(SessionMaker)
 
 ## Instantiate controllers
 view_post = endpoints.ViewPost(admin_env, post_service)

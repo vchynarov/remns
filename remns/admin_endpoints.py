@@ -89,7 +89,7 @@ class Post(AdminEndPoint):
         try:
             tag_ids = self.tag_service.initialize_tags(request.data["tags"])
             self.post_service.update(request.path_params["id"], request.data)
-            self.tagging_service.set_tags(request.path_params["id"], tag_ids)
+            self.tagging_service.set_tags(int(request.path_params["id"]), tag_ids)
             response_json = {"status": "success"}
 
         except Exception as e:

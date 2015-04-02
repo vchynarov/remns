@@ -114,15 +114,29 @@ class ModelService(object):
         new_id = new_model.id # Cannot access after session closed.
         return new_id
 
+    def find_multiple(self, args_dict):
+        session = self._get_session()
+        models = session.query(self.model).filter(self.model.in_(ids))
+        return models
 
-class TaggingService(object):
-    def __init__(self, post_service, tag_service):
-        self.post_service = post_service
-        self.tag_service = tag_service
+
+class TaggingService(ModelService):
+    def __init__(self, session_maker):
+        super(TaggingService, self).__init__(None, session_maker)
 
     def set_tags(self, post_id, tag_ids):
-        print post_id
-        print tag_ids
+        session = self._get_session()
+        insert_values = [{"post_id": int(post_id), "tag_id": int(tag_id)} for tag_id in tag_ids]
+        # More performant and way simpler to just wrap a delete all and create all in a transaction.
+        try:
+            delete_operation = Post_Tags.delete().where(Post_Tags.c.post_id == post_id)
+            insert_operation = Post_Tags.insert().values(insert_values)
+            session.execute(delete_operation)
+            session.execute(insert_operation)
+            session.commit()
+        except:
+            session.rollback()
+            raise
 
 class PostService(ModelService):
     def __init__(self, session_maker):
