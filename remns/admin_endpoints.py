@@ -144,4 +144,5 @@ class AllTags(AdminEndPoint):
         self.tag_service = tag_service
 
     def get(self, request):
-        return Response("..")
+        tags = self.tag_service.get_all()
+        return Response(json_encoder.encode([{"id": tag.id, "name": tag.name} for tag in tags]), mimetype="application/json") 

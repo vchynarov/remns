@@ -67,46 +67,53 @@ remns.init = function() {
     return editor;
 };
 
-remns.existingTags = [{id:1, name:'Java'}, {id:2, name: 'Python'}, {id:3, name: 'Ruby'}];
+remns.existingTags = [];
+$.ajax({type: "GET", url: "/admin/tags", success: function(data) {
+    $('#add-tags').selectize(
+        {
+            options: data,
+            items: [2,4],
+            labelField: 'name',
+            searchField: 'name',
+            valueField: 'id',
+            highlight: false,
+            create: true,
+            closeAfterSelect: true,
+            onItemAdd: function(d) {
+                for(var i=0; i < remns.existingTags.length; i+=1) {
+                    var option = remns.existingTags[i];
+                    if(option.id === parseInt(d)) {
+                        remns.postTags.push({
+                            "value": option.id,
+                            "status": 'existing'
+
+                        });
+                        return;
+                    }
+               } 
+               remns.postTags.push({
+                "value": d,
+                "status": "created"
+               });
+        },
+        onItemRemove: function(d) {
+            for(var i=0; i< remns.postTags.length; i+=1) {
+                var addedTag = remns.postTags[i];
+                if(addedTag.value === d || addedTag.value === parseInt(d)) {
+                    var temp = remns.postTags.splice(i);
+                    remns.postTags = remns.postTags.concat(temp.splice(1, temp.length));
+                    return;
+                }
+            }
+        }
+    });
+
+    console.log('YO!'); remns.existingTags = data; console.log(remns.existingTags)}})
+
+window.et = remns.existingTags;
+
 
 // postTags is an array of objects, {value: '', status: 'created/existing'}
 remns.postTags = [];
 window.tags = remns.postTags;
-$('#add-tags').selectize(
-    {
-        options: remns.existingTags,
-        labelField: 'name',
-        searchField: 'name',
-        valueField: 'id',
-        highlight: false,
-        create: true,
-        closeAfterSelect: true,
-        onItemAdd: function(d) {
-            for(var i=0; i < remns.existingTags.length; i+=1) {
-                var option = remns.existingTags[i];
-                if(option.id === parseInt(d)) {
-                    remns.postTags.push({
-                        "value": option.id,
-                        "status": 'existing'
-
-                    });
-                    return;
-                }
-           } 
-           remns.postTags.push({
-            "value": d,
-            "status": "created"
-           });
-    },
-    onItemRemove: function(d) {
-        for(var i=0; i< remns.postTags.length; i+=1) {
-            var addedTag = remns.postTags[i];
-            if(addedTag.value === d || addedTag.value === parseInt(d)) {
-                var temp = remns.postTags.splice(i);
-                remns.postTags = remns.postTags.concat(temp.splice(1, temp.length));
-                return;
-            }
-        }
-    }
-});
 
