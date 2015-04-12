@@ -7,15 +7,10 @@
       <label>Title</label>
       <input name="post-title" value="{{ title_placeholder }}" type="text">
     </div>
-        <h3>
-            Select tags:
-        </h3>
+    <h3> Select tags: </h3>
+    <input type="text" id="add-tags" />
 
-        <input type="text" id="add-tags">
-
-
-
-    <div id="epiceditor"></div>
+  <div id="epiceditor"></div>
 
   {% if post %}
     {% if post.published %}

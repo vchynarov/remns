@@ -10,8 +10,8 @@ def get_session_maker():
     return Session
 
 def reset():
-    Base.metadata.drop_all(engine)
     engine = create_engine(config.DB_CONN_STRING)
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine, checkfirst=True)
 
 if __name__ == "__main__":

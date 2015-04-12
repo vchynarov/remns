@@ -108,12 +108,14 @@ $.ajax({type: "GET", url: "/admin/tags", success: function(data) {
         }
     });
 
-    console.log('YO!'); remns.existingTags = data; console.log(remns.existingTags)}})
-
-window.et = remns.existingTags;
-
+    remns.existingTags = data; console.log(remns.existingTags)
+}})
 
 // postTags is an array of objects, {value: '', status: 'created/existing'}
 remns.postTags = [];
-window.tags = remns.postTags;
 
+$(function() {
+    remns.init()
+
+
+});

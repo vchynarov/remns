@@ -115,8 +115,9 @@ class AllPosts(AdminEndPoint):
     def post(self, request):
         try:
             print "Created post!"
-            print request.data
             new_id = self.post_service.create(request.data)
+            tag_ids = self.tag_service.initialize_tags(request.data["tags"])
+            self.tagging_service.set_tags(new_id, tag_ids)
             response_json = {"status": "success", "id": new_id}
         except Exception as e:
             print e
