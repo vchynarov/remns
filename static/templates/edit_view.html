@@ -49,12 +49,12 @@
 </textarea>
 
 <script src="/static/admin/utils.js"></script>
-{% if post %}
 <script>
     $(function(){
-        remns.editor=remns.init() 
-        remns.post_id = {{ post.id }}
+        // load the editor -> load post_id, -> init other things (like loading tags)
+        remns.editor=remns.init();
+        remns.post_id = {{ post.id if post}}
+        remns.tagsInit();
     });
 </script>
-{% endif %}
 {% endblock %}

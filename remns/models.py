@@ -53,6 +53,9 @@ class Post(Base):
     def update(self, put_dict):
         self._write(put_dict)
 
+    def api_representation(self):
+        pass
+
 class Tag(Base):
     __tablename__ = 'tags'
     id = Column(Integer, primary_key = True)
@@ -70,6 +73,12 @@ class Tag(Base):
     def _write(self, input_dict):
         self.name = input_dict["name"]
         self.updated = datetime.now()
+
+    def api_representation(self):
+        return {
+                "id": self.id,
+                "name": self.name
+        }
         
 class ModelService(object):
     def __init__(self, model, session_maker):
@@ -144,6 +153,11 @@ class PostService(ModelService):
 
     def get_posts_by_date(self, year, month, day, *tags):
         pass
+
+    def get_post_tags(self, post_id):
+        session = self._get_session()
+        post = session.query(Post).get(post_id)
+        return post.tags
 
         
 class TagService(ModelService):

@@ -138,12 +138,3 @@ class CreatePost(AdminEndPoint):
         }
         return Response(template.render(values), mimetype="text/html")
 
-
-class AllTags(AdminEndPoint):
-    def __init__(self, template_env, tag_service):
-        super(AllTags, self).__init__(template_env)
-        self.tag_service = tag_service
-
-    def get(self, request):
-        tags = self.tag_service.get_all()
-        return Response(json_encoder.encode([{"id": tag.id, "name": tag.name} for tag in tags]), mimetype="application/json") 

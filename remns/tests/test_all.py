@@ -1,4 +1,3 @@
-import pytest
 import time # sleep for approx timestamp comparison
 import os
 import sys

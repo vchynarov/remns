@@ -9,10 +9,8 @@ remns.init = function() {
         post.tags = tags;
         return post;
     };
-
     var postService = new (function() {
        var request = function(method, post, id) {
-           console.log('submitted request');
            var url = '/admin/posts/';
            if(id) {
              url = '/admin/posts/' + id + '/';
@@ -67,55 +65,58 @@ remns.init = function() {
     return editor;
 };
 
-remns.existingTags = [];
-$.ajax({type: "GET", url: "/admin/tags", success: function(data) {
-    $('#add-tags').selectize(
-        {
-            options: data,
-            items: [2,4],
-            labelField: 'name',
-            searchField: 'name',
-            valueField: 'id',
-            highlight: false,
-            create: true,
-            closeAfterSelect: true,
-            onItemAdd: function(d) {
-                for(var i=0; i < remns.existingTags.length; i+=1) {
-                    var option = remns.existingTags[i];
-                    if(option.id === parseInt(d)) {
-                        remns.postTags.push({
-                            "value": option.id,
-                            "status": 'existing'
 
-                        });
+remns.tagsInit = function() {
+    remns.existingTags = [];
+    // postTags is an array of objects, {value: '', status: 'created/existing'}
+    remns.postTags = [];
+    var q_all_tags = $.ajax({type: "GET", url: "/tags" });
+    var q_existing_tags = remns.post_id ? $.ajax({type: "GET", url: "/posts/" + remns.post_id + "/tags/"}) : $.Deferred().resolve();
+    $.when(q_all_tags, q_existing_tags).done(function(all_tags_response, existing_tags_response) {
+        all_tags = all_tags_response ? all_tags_response[0] : [];
+        existing_tags = existing_tags_response ? existing_tags_response[0] : [];
+        initial_tag_ids = [];
+        for(var i=0; i < existing_tags.length; i++) {
+            initial_tag_ids.push(existing_tags[i].id);
+        }
+        $('#add-tags').selectize(
+            {
+                options: all_tags,
+                items: initial_tag_ids, 
+                labelField: 'name',
+                searchField: 'name',
+                valueField: 'id',
+                highlight: false,
+                create: true,
+                closeAfterSelect: true,
+                onItemAdd: function(d) {
+                    for(var i=0; i < remns.existingTags.length; i+=1) {
+                        var option = remns.existingTags[i];
+                        if(option.id === parseInt(d)) {
+                            remns.postTags.push({
+                                "value": option.id,
+                                "status": 'existing'
+
+                            });
+                            return;
+                        }
+                   } 
+                   remns.postTags.push({
+                    "value": d,
+                    "status": "created"
+                   });
+            },
+            onItemRemove: function(d) {
+                for(var i=0; i< remns.postTags.length; i+=1) {
+                    var addedTag = remns.postTags[i];
+                    if(addedTag.value === d || addedTag.value === parseInt(d)) {
+                        var temp = remns.postTags.splice(i);
+                        remns.postTags = remns.postTags.concat(temp.splice(1, temp.length));
                         return;
                     }
-               } 
-               remns.postTags.push({
-                "value": d,
-                "status": "created"
-               });
-        },
-        onItemRemove: function(d) {
-            for(var i=0; i< remns.postTags.length; i+=1) {
-                var addedTag = remns.postTags[i];
-                if(addedTag.value === d || addedTag.value === parseInt(d)) {
-                    var temp = remns.postTags.splice(i);
-                    remns.postTags = remns.postTags.concat(temp.splice(1, temp.length));
-                    return;
                 }
             }
-        }
+        });
+        remns.existingTags = all_tags; 
     });
-
-    remns.existingTags = data; console.log(remns.existingTags)
-}})
-
-// postTags is an array of objects, {value: '', status: 'created/existing'}
-remns.postTags = [];
-
-$(function() {
-    remns.init()
-
-
-});
+};

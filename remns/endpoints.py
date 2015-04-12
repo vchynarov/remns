@@ -1,4 +1,6 @@
 from werkzeug.wrappers import Request, BaseResponse as Response
+from helpers import encode 
+
 
 class EndPoint(object):
     def __init__(self, template_env):
@@ -38,5 +40,26 @@ class ViewPost(EndPoint):
         print "post request!"
         print request
         self.response = "postin posts!"
+
+class PostTags(EndPoint):
+    def __init__(self, template_env, post_service):
+        super(PostTags, self).__init__(template_env)
+        self.post_service = post_service
+
+    def get(self, request):
+        print "Getting post tags!"
+        print request
+        post_tags = self.post_service.get_post_tags(request.path_params['id'])
+        return Response(encode(post_tags), mimetype="application/json")
+
+
+class AllTags(EndPoint):
+    def __init__(self, template_env, tag_service):
+        super(AllTags, self).__init__(template_env)
+        self.tag_service = tag_service
+
+    def get(self, request):
+        tags = self.tag_service.get_all()
+        return Response(encode(tags), mimetype="application/json") 
 
 

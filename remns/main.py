@@ -24,14 +24,17 @@ login = admin_endpoints.Login(admin_env, config.USER, config.PASSWORD )
 create_post = admin_endpoints.CreatePost(admin_env, post_service)
 edit_post = admin_endpoints.Post(admin_env, post_service, tag_service, tagging_service)
 admin_all_posts = admin_endpoints.AllPosts(admin_env, post_service, tag_service, tagging_service)
-admin_all_tags = admin_endpoints.AllTags(admin_env, tag_service)
+
+all_tags = endpoints.AllTags(None, tag_service) # Does not need env, so not passing one in.
+post_tags = endpoints.PostTags(None, post_service) 
 
 url_map = Map([
     Rule('/admin/', endpoint=login),
     Rule('/admin/posts/', endpoint=admin_all_posts),
     Rule('/admin/posts/new/', endpoint=create_post),
     Rule('/admin/posts/<int:id>/', endpoint=edit_post),
-    Rule('/admin/tags/', endpoint=admin_all_tags),
+    Rule('/tags/', endpoint=all_tags),
+    Rule('/posts/<int:id>/tags/', endpoint=post_tags),
     Rule('/', endpoint=view_post),
     Rule('/<int:year>/', endpoint=view_post),
     Rule('/<int:year>/<int:month>/', endpoint=view_post),
