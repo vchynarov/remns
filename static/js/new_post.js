@@ -24,11 +24,10 @@ remns.init = function() {
                     console.log('YO!');
 
                     if(data.status === 'success') {
-                        console.log('succesful!');
                         window.location.replace("/admin/posts/");
                     }
                     else if(data.status === 'error') {
-                        console.err('Error');
+                        console.error('Error');
                         console.log(data);
 
                     }
@@ -84,6 +83,7 @@ remns.tagsInit = function() {
         initial_tag_ids = [];
         for(var i=0; i < existing_tags.length; i++) {
             initial_tag_ids.push(existing_tags[i].id);
+            remns.postTags.push({status: 'existing', value: existing_tags[i].id})
         }
         $('#add-tags').selectize(
             {

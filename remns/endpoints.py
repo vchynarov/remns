@@ -47,8 +47,6 @@ class PostTags(EndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        print "Getting post tags!"
-        print request
         post_tags = self.post_service.get_post_tags(request.path_params['id'])
         return Response(encode(post_tags), mimetype="application/json")
 
