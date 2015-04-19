@@ -20,9 +20,9 @@ class EndPoint(object):
 
     def get_response(self, request):
         verb_map = {
-            'GET' : self.get,
+            'GET': self.get,
             'POST': self.post,
-            'PUT' : self.put
+            'PUT': self.put
         }
         return verb_map[request.method](request)
 

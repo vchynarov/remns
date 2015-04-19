@@ -21,15 +21,12 @@ remns.init = function() {
                 data: JSON.stringify(post),
                 contentType: 'application/json',
                 success: function(data) {
-                    console.log('YO!');
-
                     if(data.status === 'success') {
                         window.location.replace("/admin/posts/");
                     }
                     else if(data.status === 'error') {
                         console.error('Error');
                         console.log(data);
-
                     }
                 }
             });
