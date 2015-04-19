@@ -96,7 +96,7 @@ class Post(AdminEndPoint):
             print e
             response_json = {"status": "error"}
 
-        return Response(json_encoder.encode(response_json))
+        return Response(json_encoder.encode(response_json), mimetype='application/json')
 
 # /admin/posts
 class AllPosts(AdminEndPoint):
@@ -123,7 +123,7 @@ class AllPosts(AdminEndPoint):
             print e
             response_json = {"status": "error"}
 
-        return Response(json_encoder.encode(response_json))
+        return Response(json_encoder.encode(response_json), mimetype='application/json')
 
 # /admin/posts/new
 class CreatePost(AdminEndPoint):
