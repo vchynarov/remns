@@ -1,44 +1,58 @@
 {% extends "base.html" %}
 {% block main %}
 
+<div class="row"></div>
+<div class="row">
 <form id="post-form" class="ui form" action="/admin/posts" method="post">
 
     <div class="field">
-      <label>Title</label>
+      <h4>Title</h4>
+      {% if post %}
       <input name="post-title" value="{{ title_placeholder }}" type="text">
+      {% else %}
+      <input name="post-title" placeholder="{{ title_placeholder }}" type="text">
+      {% endif %}
     </div>
-    <h3> Select tags: </h3>
-    <input type="text" id="add-tags" />
+    <h4> Select tags: </h4>
 
-  <div id="epiceditor"></div>
+    <div class="row">
+        <input class="validate" type="text" id="add-tags" />
+    </div>
 
-  {% if post %}
-    {% if post.published %}
-    <a href="javascript:void(0)"  class="fluid ui button post-submit"
-       data-action="update" data-mode="published">
-        Update 
-    </a>
-    {% else %}
-        {# Existing post but only in draft form. #}
-    <a href="javascript:void(0)"  class="fluid ui button post-submit"
-       data-action="update" data-mode="draft">
-        Update Draft
-    </a>
-    <a href="javascript:void(0)"  class="fluid ui button post-submit"
-       data-action="update" data-mode="published">
-       Publish
-    </a>
-    {% endif %}
-  {% else %}
-    <a href="javascript:void(0)"  class="fluid ui button post-submit"
-       data-action="create" data-mode="draft">
-       Save Draft
-    </a>
-    <a href="javascript:void(0)"  class="fluid ui button post-submit"
-       data-action="create" data-mode="published">
-       Publish
-    </a>
-  {% endif %}
+  <div id="epiceditor" class="z-depth-3"></div>
+
+  <div class="row"></div>
+
+  {# Button Alignment #}
+  <div class="row">
+      {% if post %}
+        {% if post.published %}
+        <a href="javascript:void(0)"  class="waves-effect waves-light btn teal post-submit"
+           data-action="update" data-mode="published">
+            Update 
+        </a>
+        {% else %}
+            {# Existing post but only in draft form. #}
+        <a href="javascript:void(0)"  class="waves-effect waves-light btn blue post-submit"
+           data-action="update" data-mode="draft">
+            Update Draft
+        </a>
+        <a href="javascript:void(0)"  class="waves-effect waves-light btn red post-submit"
+           data-action="update" data-mode="published">
+           Publish
+        </a>
+        {% endif %}
+      {% else %}
+        <a href="javascript:void(0)"  class="col offset-s2 s3 waves-effect waves-light btn blue post-submit"
+           data-action="create" data-mode="draft">
+           Save Draft
+        </a>
+        <a href="javascript:void(0)"  class="col s3 waves-effect waves-light btn red post-submit"
+           data-action="create" data-mode="published">
+           Publish
+        </a>
+      {% endif %}
+  </div>
   
 </form>
 
@@ -58,3 +72,4 @@
     });
 </script>
 {% endblock %}
+</div>

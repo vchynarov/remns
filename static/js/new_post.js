@@ -118,8 +118,14 @@ remns.tagsInit = function() {
                         return;
                     }
                 }
-            }
-        });
+            },
+            render: {
+                item: function(data, escape) {
+                    console.log('hitting render!');
+                    console.log(data);
+                    return '<div class="btn btn-small blue" >' + data.name + '</div>';
+                }
+            }});
         remns.existingTags = all_tags; 
     });
 };

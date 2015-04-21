@@ -8,6 +8,7 @@ var build_tasks = [
   'build-epiceditor',
   'build-vendor-css',
   'build-vendor-js',
+  'move-vendor-fonts',
   'build-admin-js',
   'move-templates'
 ];
@@ -16,7 +17,9 @@ var DISTDIR = 'remns/dist';
 var dist = {
     'static': path.join(DISTDIR, 'static', 'admin'),
     'templates': path.join(DISTDIR, 'templates', 'admin'),
-    'epiceditor': path.join(DISTDIR, 'static', 'admin', 'epiceditor')
+    'epiceditor': path.join(DISTDIR, 'static', 'admin', 'epiceditor'),
+    'fonts': path.join(DISTDIR, 'static', 'fonts')
+
 };
 
 gulp.task('default', build_tasks);
@@ -27,14 +30,14 @@ gulp.task('watch', function() {
  
 var bowerPaths = {
     'css' : [
-        'bower_components/semantic-ui/dist/semantic.min.css',
-        'bower_components/selectize/dist/css/selectize.css'
+        'bower_components/selectize/dist/css/selectize.css',
+        'bower_components/materialize/dist/css/materialize.min.css'
      ],
     'js' : [
         'bower_components/jquery/dist/jquery.js',
         'bower_components/epiceditor/epiceditor/js/epiceditor.js',
         'bower_components/selectize/dist/js/standalone/selectize.min.js',
-        'bower_components/semantic-ui/dist/semantic.js'
+        'bower_components/materialize/dist/js/materialize.min.js'
      ]
 };
 
@@ -50,6 +53,11 @@ var remnsPaths = {
 gulp.task('move-templates', function() {
     return gulp.src(remnsPaths.templates)
         .pipe(gulp.dest(dist.templates));
+});
+
+gulp.task('move-vendor-fonts', function() {
+    return gulp.src('bower_components/materialize/font/roboto/*')
+        .pipe(gulp.dest(dist.fonts));
 });
 
 gulp.task('build-admin-js', function() {
