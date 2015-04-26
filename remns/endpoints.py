@@ -32,13 +32,9 @@ class ViewPost(EndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        print "get request!"
-        print request
         self.response = "getting posts"
 
     def post(self, request):
-        print "post request!"
-        print request
         self.response = "postin posts!"
 
 class PostTags(EndPoint):

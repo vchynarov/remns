@@ -7,7 +7,7 @@ import markdown2
 Base = declarative_base()
 
 Post_Tags = Table('post_tags', Base.metadata,
-     Column('id', Integer, primary_key = True),
+     Column('id', Integer, primary_key=True),
      Column('post_id', Integer, ForeignKey('posts.id')),
      Column('tag_id', Integer, ForeignKey('tags.id'))
 )
@@ -16,7 +16,7 @@ class Post(Base):
     MAX_TOKENS = 6
 
     __tablename__ = 'posts'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     title = Column(String, unique=True, nullable=False)
     web_title = Column(String, unique=True, nullable=False)
     raw_content = Column(Text, nullable=False)
@@ -58,8 +58,8 @@ class Post(Base):
 
 class Tag(Base):
     __tablename__ = 'tags'
-    id = Column(Integer, primary_key = True)
-    name = Column(String, unique = True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
     created = Column(DateTime, nullable=False)
     updated = Column(DateTime, nullable=False)
 
@@ -151,7 +151,7 @@ class PostService(ModelService):
     def __init__(self, session_maker):
         super(PostService, self).__init__(Post, session_maker)
 
-    def get_posts_by_date(self, year, month, day, *tags):
+    def get_posts_by_date(self, year, month=None, day=None, *tags):
         pass
 
     def get_post_tags(self, post_id):

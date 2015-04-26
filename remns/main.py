@@ -38,9 +38,10 @@ url_map = Map([
     Rule('/', endpoint=view_post),
     Rule('/<int:year>/', endpoint=view_post),
     Rule('/<int:year>/<int:month>/', endpoint=view_post),
-    Rule('/<int:year>/<int:month>/<int:day>/', endpoint=view_post),
-    Rule('/<int:year>/<string:month>/<int:day>/', endpoint=view_post)
+    Rule('/<int:year>/<int:month>/<string:web_title>/', endpoint=view_post)
+
 ])
+
 
 @Request.application
 def app(request):
@@ -58,10 +59,10 @@ def app(request):
 
         except ValueError:
             print "Couldn't convert to json."
-    if(endpoint):
+    if endpoint:
         response = endpoint.get_response(request)
         return response
     else:
-        print  "Essentially a 404"
+        print "Essentially a 404"
         return Response('this is way cleaner')
 

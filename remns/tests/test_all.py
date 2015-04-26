@@ -2,46 +2,54 @@ import pytest
 import time # sleep for approx timestamp comparison
 import os
 import sys
-import sqlalchemy
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base 
+
 from datetime import datetime
+sys.path.append(os.path.realpath('./remns')) # Test working directory from main remns dir.
 
-# Set up path to import remns things.
-sys.path.append(os.path.realpath('./remns'))
-
-# import models
-from models import PostService, TagService, Post_Tags, Base
-
-
-# Set up database
+# Fixtures
 @pytest.fixture
 def session():
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy import create_engine
+    from models import Base
     TestSession = sessionmaker()
     engine = create_engine('sqlite:///:memory:', echo=True)
     Base.metadata.create_all(engine, checkfirst=True)
     TestSession.configure(bind=engine)
     return TestSession
 
+@pytest.fixture
+def post_service(session):
+    from models import PostService
+    return PostService(session)
+
+@pytest.fixture
+def tag_service(session):
+    from models import TagService
+    return TagService(session)
+
+@pytest.fixture
+def tagging_service(session):
+    from models import TaggingService
+    return TaggingService(session)
+
+
 def approx_same(time1, time2):
+    """
+    When checking for update, make sure that time differences are in fact,
+    different.
+
+    :param time1:
+    :param time2:
+    :return: bool
+    """
     return abs((time2-time1).total_seconds()) < 0.01
 
 # init testing services
 
 class TestPostServiceWrites(object):
-    
-    def get_post_service(self):
-        if '_postservice' in dir(self):
-            return self._postservice
-        else:
-            self._postservice = PostService(session())
-            return self._postservice
-
-
     # uses Global to test updates
-    def test_create_basic_draft(self):
-        post_service = self.get_post_service()
+    def test_create_basic_draft(self, post_service):
         test_post = {
             "title": "My first test post.",
             "content": "Here is some content",
@@ -60,8 +68,7 @@ class TestPostServiceWrites(object):
         assert not retrieved.published
 
     # uses Global to test updates
-    def test_create_basic_published(self):
-        post_service = self.get_post_service()
+    def test_create_basic_published(self, post_service):
         test_post = {
             "title": "My second test post.",
             "content": "Some more content",
@@ -79,8 +86,7 @@ class TestPostServiceWrites(object):
         assert retrieved.published
     
     # secondary test
-    def test_update_basic_draft(self):
-        post_service = self.get_post_service()
+    def test_update_basic_draft(self, post_service):
         test_post = {
             "title": "To be updated post",
             "content": "Initial content",
@@ -98,7 +104,7 @@ class TestPostServiceWrites(object):
         post_service.update(model_id, updates)
         retrieved = post_service.find(model_id)
         assert retrieved.id == model_id
-        # we title should not change!
+        # web title should not change!
         assert "to-be-updated-post" in retrieved.web_title
         assert retrieved.title == "Updated title"
         assert not approx_same(retrieved.created, retrieved.updated)
@@ -106,8 +112,7 @@ class TestPostServiceWrites(object):
         assert retrieved.display_content == '<p>Updated content</p>\n' 
         assert retrieved.published
 
-    def test_delete_post(self):
-        post_service = self.get_post_service()
+    def test_delete_post(self, post_service):
         test_post = {
             "title": "Post to be deleted",
             "content": "Some more content",
@@ -120,16 +125,27 @@ class TestPostServiceWrites(object):
         pass
 
 class TestTagService(object):
+    def test_create_new_tags(self, tag_service):
+        options = [
+            {"status": "created", "value": "python"},
+            {"status": "created", "value": "tooling"},
+            {"status": "created", "value": "gulp"},
+            {"status": "created", "value": "sinatra"}
+        ]
+        resulting_ids = tag_service.initialize_tags(options)
+        all_tags = tag_service.get_all()
+        assert sorted(resulting_ids) == sorted([tag.id for tag in all_tags])
 
-    def get_tag_service(self):
-        if '_tagservice' in dir(self):
-            return self._tagservice
-        else:
-            self._tagservce = TagService(session())
-            return self._tagservce
 
-    def test_create_tag(self):
-        tag_service = self.get_tag_service()
+
+
+
+
+    def test_create_some_new_tags(self, tag_service):
+        pass
+
+
+    def test_create_tag(self, tag_service):
         test_tag = {
             "name": "First Tag"
         }
@@ -139,33 +155,7 @@ class TestTagService(object):
         assert retrieved.name == test_tag["name"]
         assert approx_same(retrieved.created, retrieved.updated)
 
-    def test_update_tag(self):
-        tag_service = self.get_tag_service()
-        test_tag = {
-            "name": "First Tag"
-        }
-        model_id = tag_service.create(test_tag)
-        # time for updates
-        time.sleep(0.1)
-        tag_service.update(model_id, {"name": "Updated Tag Name"})
-        retrieved = tag_service.find(model_id)
-        assert retrieved.id == model_id
-        assert retrieved.name == "Updated Tag Name"
-        assert not approx_same(retrieved.created, retrieved.updated)
-        
-
-    def test_rename_tag(self):
-        tag_service = self.get_tag_service()
-        test_tag = {
-            "name": "Unupdated"
-        }
-        model_id = tag_service.create(test_tag)
-        tag_service.update(model_id, {"name": "updated_tag"})
-        new_model_id = tag_service.find(model_id)
-        assert new_model_id.name == "updated_tag"
-
-    def test_delete_tag(self):
-        tag_service = self.get_tag_service()
+    def test_delete_tag(self, tag_service):
         test_tag = {
             "name": "to be deleted"
         }
@@ -174,3 +164,19 @@ class TestTagService(object):
         deleted_tag = tag_service.find(model_id)
         assert deleted_tag is None
 
+class TestTaggingService(object):
+
+    def test_create_post_new_tags(self):
+        pass
+
+    def test_update_post_new_tags(self):
+        pass
+
+    def test_new_tags_with_existing_tags(self):
+        pass
+
+class TestTagQuerying(object):
+    pass
+
+class TestDateQuerying(object):
+    pass

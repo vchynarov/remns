@@ -103,7 +103,7 @@ remns.tagsInit = function() {
                             });
                             return;
                         }
-                   } 
+                   }
                    remns.postTags.push({
                     "value": d,
                     "status": "created"

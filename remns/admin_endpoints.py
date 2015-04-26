@@ -33,13 +33,9 @@ class ViewPost(AdminEndPoint):
         self.post_service = post_service
 
     def get(self, request):
-        print "get request!"
-        print request
         self.response = "getting posts"
 
     def post(self, request):
-        print "post request!"
-        print request
         self.response = "postin posts!"
 
 class Login(AdminEndPoint):
@@ -114,7 +110,6 @@ class AllPosts(AdminEndPoint):
     
     def post(self, request):
         try:
-            print "Created post!"
             new_id = self.post_service.create(request.data)
             tag_ids = self.tag_service.initialize_tags(request.data["tags"])
             self.tagging_service.set_tags(new_id, tag_ids)
