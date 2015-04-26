@@ -49,6 +49,9 @@ def approx_same(time1, time2):
 def find(items, key, value):
     return filter(lambda item: getattr(item, key) == value, items)[0]
 
+def extract(items, key):
+    return map(lambda item: getattr(item, key), items)
+
 class TestPostServiceWrites(object):
     # uses Global to test updates
     def test_create_basic_draft(self, post_service):
@@ -127,7 +130,6 @@ class TestPostServiceWrites(object):
         pass
 
 class TestTagService(object):
-
     def test_create_new_tags(self, tag_service):
         api_tags = [
             {"status": "created", "value": "python"},
@@ -181,15 +183,49 @@ class TestTagService(object):
         assert deleted_tag is None
 
 class TestTaggingService(object):
+    def test_create_post_new_tags(self, post_service, tag_service, tagging_service):
+        test_post = {
+            "title": "To be updated post",
+            "content": "Initial content",
+            "mode": "draft"
+        }
+        api_tags = [
+            {"status": "created", "value": "python"},
+            {"status": "created", "value": "tooling"},
+            {"status": "created", "value": "gulp"},
+            {"status": "created", "value": "sinatra"}
+        ]
+        tag_service.initialize_tags(api_tags)
+        new_post_id = post_service.create(test_post)
+        all_tags = tag_service.get_all()
+        sinatra = find(all_tags, "name", "sinatra")
+        python = find(all_tags, "name", "python")
+        tagging_service.set_tags(new_post_id, [sinatra.id, python.id])
+        updated_post = post_service.find(new_post_id)
+        assert sorted(extract([sinatra, python], "name")) == sorted(extract(updated_post.tags, "name"))
 
-    def test_create_post_new_tags(self):
-        pass
-
-    def test_update_post_new_tags(self):
-        pass
-
-    def test_new_tags_with_existing_tags(self):
-        pass
+    def test_update_post_new_tags(self, post_service, tag_service, tagging_service):
+        test_post = {
+            "title": "To be updated post",
+            "content": "Initial content",
+            "mode": "draft"
+        }
+        api_tags = [
+            {"status": "created", "value": "python"},
+            {"status": "created", "value": "tooling"},
+            {"status": "created", "value": "gulp"},
+            {"status": "created", "value": "sinatra"}
+        ]
+        tag_service.initialize_tags(api_tags)
+        new_post_id = post_service.create(test_post)
+        all_tags = tag_service.get_all()
+        # Set two tags at first
+        tagging_service.set_tags(new_post_id, [tag.id for tag in all_tags])
+        sinatra = find(all_tags, "name", "sinatra")
+        python = find(all_tags, "name", "python")
+        tagging_service.set_tags(new_post_id, [sinatra.id, python.id])
+        updated_post = post_service.find(new_post_id)
+        assert sorted(extract([sinatra, python], "name")) == sorted(extract(updated_post.tags, "name"))
 
 class TestTagQuerying(object):
     pass
