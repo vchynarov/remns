@@ -45,7 +45,9 @@ def approx_same(time1, time2):
     """
     return abs((time2-time1).total_seconds()) < 0.01
 
-# init testing services
+
+def find(items, key, value):
+    return filter(lambda item: getattr(item, key) == value, items)[0]
 
 class TestPostServiceWrites(object):
     # uses Global to test updates
@@ -125,24 +127,38 @@ class TestPostServiceWrites(object):
         pass
 
 class TestTagService(object):
+
     def test_create_new_tags(self, tag_service):
-        options = [
+        api_tags = [
             {"status": "created", "value": "python"},
             {"status": "created", "value": "tooling"},
             {"status": "created", "value": "gulp"},
             {"status": "created", "value": "sinatra"}
         ]
-        resulting_ids = tag_service.initialize_tags(options)
+        resulting_ids = tag_service.initialize_tags(api_tags)
         all_tags = tag_service.get_all()
         assert sorted(resulting_ids) == sorted([tag.id for tag in all_tags])
 
-
-
-
-
-
     def test_create_some_new_tags(self, tag_service):
-        pass
+        initial_api_tags = [
+            {"status": "created", "value": "tooling"},
+            {"status": "created", "value": "gulp"}
+        ]
+        tag_service.initialize_tags(initial_api_tags)
+        all_tags = tag_service.get_all()
+        tooling = find(all_tags, "name", "tooling")
+        gulp = find(all_tags, "name", "gulp")
+        new_api_tags = [
+            {"status": "existing", "value": tooling.id},
+            {"status": "existing", "value": gulp.id},
+            {"status": "created", "value": "python"},
+            {"status": "created", "value": "django"}
+        ]
+        tag_service.initialize_tags(new_api_tags)
+        updated_all_tags = tag_service.get_all()
+        assert len(updated_all_tags) > len(all_tags)
+        assert find(updated_all_tags, "name", "python")
+        assert find(updated_all_tags, "name", "django")
 
 
     def test_create_tag(self, tag_service):
