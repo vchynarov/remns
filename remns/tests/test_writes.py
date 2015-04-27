@@ -1,37 +1,7 @@
 import pytest
 import time # sleep for approx timestamp comparison
-import os
-import sys
-
+from fixtures import session, post_service, tag_service, tagging_service
 from datetime import datetime
-sys.path.append(os.path.realpath('./remns')) # Test working directory from main remns dir.
-
-# Fixtures
-@pytest.fixture
-def session():
-    from sqlalchemy.orm import sessionmaker
-    from sqlalchemy import create_engine
-    from models import Base
-    TestSession = sessionmaker()
-    engine = create_engine('sqlite:///:memory:', echo=True)
-    Base.metadata.create_all(engine, checkfirst=True)
-    TestSession.configure(bind=engine)
-    return TestSession
-
-@pytest.fixture
-def post_service(session):
-    from models import PostService
-    return PostService(session)
-
-@pytest.fixture
-def tag_service(session):
-    from models import TagService
-    return TagService(session)
-
-@pytest.fixture
-def tagging_service(session):
-    from models import TaggingService
-    return TaggingService(session)
 
 
 def approx_same(time1, time2):
@@ -231,4 +201,38 @@ class TestTagQuerying(object):
     pass
 
 class TestDateQuerying(object):
-    pass
+    def __init__(self, session):
+        assert 1 == 2
+        self.post_service = post_service(session)
+        self.last_year = self.post_service.create({
+            "title": "Old Post",
+            "content": "Initial content",
+            "mode": "published"
+        })
+        self.this_year = self.post_service.create({
+            "title": "This year post",
+            "content": "Other content",
+            "mode": "draft"
+        })
+        self.this_year_diff_month = self.post_service.create({
+            "title": "newer post",
+            "content": "Newer content",
+            "mode": "published"
+        })
+        self.last_year.created = datetime(2013, 03, 01)
+        self.this_year.created = datetime(2015, 01, 01)
+        self.this_year_diff_month.created = datetime(2015, 03, 01)
+
+
+    def test_year_query(self, post_service):
+        this_year_posts = post_service.get_posts_by_date(2015)
+        assert sorted([post.id for post in this_year_posts]) == sorted([self.this_year.id, self.this_year_diff_month.id])
+
+    def test_month_query(self, post_service):
+        this_month_posts = post_service.get_posts_by_date(2015, 03, 01)
+        assert len(this_month_posts) == 0
+        assert this_month_posts[0].id == self.this_year_diff_month
+        assert 5 == 2
+
+    def test_specific_post(self, post_service):
+        pass

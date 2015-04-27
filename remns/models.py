@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, ForeignKey, Column, Integer, String, DateTime, Text, Boolean
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
+import calendar
 import markdown2
 
 Base = declarative_base()
@@ -151,13 +152,25 @@ class PostService(ModelService):
     def __init__(self, session_maker):
         super(PostService, self).__init__(Post, session_maker)
 
-    def get_posts_by_date(self, year, month=None, day=None, *tags):
-        pass
+    def get_posts_by_date(self, year, month=None, *tags):
+        session = self._get_session()
+        if month:
+            start_date = datetime(year, month, 1)
+            end_date = datetime(year, month, calendar.monthrange(year, month)[1])
+        else:
+            start_date = datetime(year, 1, 1)
+            end_date = datetime(year, 12, 1)
+
+        return session.query(Post).filter(Post.created >= start_date, Post.created <= end_date).order_by('id DESC').all()
 
     def get_post_tags(self, post_id):
         session = self._get_session()
         post = session.query(Post).get(post_id)
         return post.tags
+
+    def retrieve(self, web_title):
+        pass
+
 
         
 class TagService(ModelService):
