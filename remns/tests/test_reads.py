@@ -36,13 +36,14 @@ this_year_diff_month.created = datetime(2015, 03, 01)
 
 
 def test_year_query():
-    this_year_posts = post_service.get_posts_by_date(2015)
+    this_year_posts = post_service.filter(2015)
     assert sorted([post.id for post in this_year_posts]) == sorted([this_year.id, this_year_diff_month.id])
 
 def test_month_query():
-    this_month_posts = post_service.get_posts_by_date(2015, 03, 01)
+    this_month_posts = post_service.filter(2015, 03, 01)
     assert len(this_month_posts) == 1
     assert this_month_posts[0].id == this_year_diff_month_id
 
 def test_specific_post():
-    pass
+    old_post = post_service.retrieve(2013, 03, 'old-post')
+    assert old_post.id == last_year.id

@@ -41,8 +41,7 @@ class Post(Base):
         escaped = reduce(lambda rest, x: rest.replace(x, ""), replacers, web_title)
         # In case of double spaces.
         tokens = filter(lambda token: token, escaped.lower().split(" ")[:self.MAX_TOKENS])
-        timestamp = datetime.now().strftime("%y-%m-%d-")
-        return timestamp + "-".join(tokens)
+        return "-".join(tokens)
 
     def _write(self, input_dict):
         self.title = input_dict['title']
@@ -152,7 +151,7 @@ class PostService(ModelService):
     def __init__(self, session_maker):
         super(PostService, self).__init__(Post, session_maker)
 
-    def get_posts_by_date(self, year, month=None, *tags):
+    def filter(self, year, month=None, *tags):
         session = self._get_session()
         if month:
             start_date = datetime(year, month, 1)
@@ -163,14 +162,17 @@ class PostService(ModelService):
 
         return session.query(Post).filter(Post.created >= start_date, Post.created <= end_date).order_by('id DESC').all()
 
+    def retrieve(self, year, month, web_title):
+        session = self._get_session()
+        post = session.query(Post).filter(Post.web_title == web_title).first()
+        assert post.created.year == year
+        assert post.created.month == month
+        return post
+
     def get_post_tags(self, post_id):
         session = self._get_session()
         post = session.query(Post).get(post_id)
         return post.tags
-
-    def retrieve(self, web_title):
-        pass
-
 
         
 class TagService(ModelService):
