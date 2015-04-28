@@ -30,16 +30,16 @@ class TestPostServiceWrites(object):
             "content": "Here is some content",
             "mode": "draft"
         }
-        model_id = post_service.create(test_post)
-        retrieved = post_service.find(model_id)
-        self.created_draft_id = model_id
+        model = post_service.create(test_post)
+        retrieved = post_service.find(model.id)
+        self.created_draft_id = model.id
 
         assert retrieved.title == "My first test post."
         assert approx_same(retrieved.created, retrieved.updated) 
         assert "my-first-test-post" in retrieved.web_title
         assert retrieved.raw_content == test_post['content']
         assert retrieved.display_content == '<p>Here is some content</p>\n' 
-        assert retrieved.id == model_id
+        assert retrieved.id == model.id
         assert not retrieved.published
 
     # uses Global to test updates
@@ -50,14 +50,14 @@ class TestPostServiceWrites(object):
             "mode": "published"
         }
 
-        model_id = post_service.create(test_post)
-        retrieved = post_service.find(model_id)
+        model = post_service.create(test_post)
+        retrieved = post_service.find(model.id)
         assert approx_same(retrieved.created, retrieved.updated)
         assert retrieved.title == test_post['title']
         assert "my-second-test-post" in retrieved.web_title
         assert retrieved.raw_content == test_post['content']
         assert retrieved.display_content == '<p>Some more content</p>\n' 
-        assert retrieved.id == model_id
+        assert retrieved.id == model.id
         assert retrieved.published
     
     # secondary test
@@ -73,12 +73,12 @@ class TestPostServiceWrites(object):
             "mode": "published"
         }
 
-        model_id = post_service.create(test_post)
+        model = post_service.create(test_post)
         # time for updates
         time.sleep(0.1)
-        post_service.update(model_id, updates)
-        retrieved = post_service.find(model_id)
-        assert retrieved.id == model_id
+        post_service.update(model.id, updates)
+        retrieved = post_service.find(model.id)
+        assert retrieved.id == model.id
         # web title should not change!
         assert "to-be-updated-post" in retrieved.web_title
         assert retrieved.title == "Updated title"
@@ -93,11 +93,10 @@ class TestPostServiceWrites(object):
             "content": "Some more content",
             "mode": "published"
         }
-        model_id = post_service.create(test_post)
-        post_service.delete(model_id)
-        deleted_post = post_service.find(model_id)
+        model = post_service.create(test_post)
+        post_service.delete(model.id)
+        deleted_post = post_service.find(model.id)
         assert deleted_post is None
-        pass
 
 class TestTagService(object):
     def test_create_new_tags(self, tag_service):
@@ -137,9 +136,9 @@ class TestTagService(object):
         test_tag = {
             "name": "First Tag"
         }
-        model_id = tag_service.create(test_tag)
-        retrieved = tag_service.find(model_id)
-        self.created_id = model_id
+        model = tag_service.create(test_tag)
+        retrieved = tag_service.find(model.id)
+        self.created_id = model.id
         assert retrieved.name == test_tag["name"]
         assert approx_same(retrieved.created, retrieved.updated)
 
@@ -147,9 +146,9 @@ class TestTagService(object):
         test_tag = {
             "name": "to be deleted"
         }
-        model_id = tag_service.create(test_tag)
-        tag_service.delete(model_id)
-        deleted_tag = tag_service.find(model_id)
+        model = tag_service.create(test_tag)
+        tag_service.delete(model.id)
+        deleted_tag = tag_service.find(model.id)
         assert deleted_tag is None
 
 class TestTaggingService(object):
@@ -166,12 +165,12 @@ class TestTaggingService(object):
             {"status": "created", "value": "sinatra"}
         ]
         tag_service.initialize_tags(api_tags)
-        new_post_id = post_service.create(test_post)
+        new_post = post_service.create(test_post)
         all_tags = tag_service.get_all()
         sinatra = find(all_tags, "name", "sinatra")
         python = find(all_tags, "name", "python")
-        tagging_service.set_tags(new_post_id, [sinatra.id, python.id])
-        updated_post = post_service.find(new_post_id)
+        tagging_service.set_tags(new_post.id, [sinatra.id, python.id])
+        updated_post = post_service.find(new_post.id)
         assert sorted(extract([sinatra, python], "name")) == sorted(extract(updated_post.tags, "name"))
 
     def test_update_post_new_tags(self, post_service, tag_service, tagging_service):
@@ -187,52 +186,12 @@ class TestTaggingService(object):
             {"status": "created", "value": "sinatra"}
         ]
         tag_service.initialize_tags(api_tags)
-        new_post_id = post_service.create(test_post)
+        new_post = post_service.create(test_post)
         all_tags = tag_service.get_all()
         # Set two tags at first
-        tagging_service.set_tags(new_post_id, [tag.id for tag in all_tags])
+        tagging_service.set_tags(new_post.id, [tag.id for tag in all_tags])
         sinatra = find(all_tags, "name", "sinatra")
         python = find(all_tags, "name", "python")
-        tagging_service.set_tags(new_post_id, [sinatra.id, python.id])
-        updated_post = post_service.find(new_post_id)
+        tagging_service.set_tags(new_post.id, [sinatra.id, python.id])
+        updated_post = post_service.find(new_post.id)
         assert sorted(extract([sinatra, python], "name")) == sorted(extract(updated_post.tags, "name"))
-
-class TestTagQuerying(object):
-    pass
-
-class TestDateQuerying(object):
-    def __init__(self, session):
-        assert 1 == 2
-        self.post_service = post_service(session)
-        self.last_year = self.post_service.create({
-            "title": "Old Post",
-            "content": "Initial content",
-            "mode": "published"
-        })
-        self.this_year = self.post_service.create({
-            "title": "This year post",
-            "content": "Other content",
-            "mode": "draft"
-        })
-        self.this_year_diff_month = self.post_service.create({
-            "title": "newer post",
-            "content": "Newer content",
-            "mode": "published"
-        })
-        self.last_year.created = datetime(2013, 03, 01)
-        self.this_year.created = datetime(2015, 01, 01)
-        self.this_year_diff_month.created = datetime(2015, 03, 01)
-
-
-    def test_year_query(self, post_service):
-        this_year_posts = post_service.get_posts_by_date(2015)
-        assert sorted([post.id for post in this_year_posts]) == sorted([self.this_year.id, self.this_year_diff_month.id])
-
-    def test_month_query(self, post_service):
-        this_month_posts = post_service.get_posts_by_date(2015, 03, 01)
-        assert len(this_month_posts) == 0
-        assert this_month_posts[0].id == self.this_year_diff_month
-        assert 5 == 2
-
-    def test_specific_post(self, post_service):
-        pass

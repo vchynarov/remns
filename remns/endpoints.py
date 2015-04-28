@@ -69,4 +69,4 @@ class AllTags(EndPoint):
 
     def get(self, request):
         tags = self.tag_service.get_all()
-        return Response(encode(tags), mimetype="application/json") 
+        return Response(encode(tags), mimetype="application/json")

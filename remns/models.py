@@ -97,6 +97,7 @@ class ModelService(object):
         existing_model.update(args_dict)
         session.add(existing_model)
         session.commit()
+        return existing_model
 
     def _get_session(self):
         pool = None
@@ -120,8 +121,7 @@ class ModelService(object):
         new_model = self.model(args_dict)
         session.add(new_model)
         session.commit()
-        new_id = new_model.id # Cannot access after session closed.
-        return new_id
+        return new_model
 
     def find_multiple(self, args_dict):
         session = self._get_session()
@@ -184,6 +184,6 @@ class TagService(ModelService):
             Returns an array of integers of newly created tags!
         """
         new_tags = filter(lambda tag: tag["status"] == "created", submitted_tags)
-        existing_ids = [int(tag["value"]) for tag in  filter(lambda tag: tag["status"] == "existing", submitted_tags)]
-        new_ids = [self.create({"name": new_tag["value"]}) for new_tag in new_tags]
+        existing_ids = [int(tag["value"]) for tag in filter(lambda tag: tag["status"] == "existing", submitted_tags)]
+        new_ids = [self.create({"name": new_tag["value"]}).id for new_tag in new_tags]
         return new_ids + existing_ids
