@@ -26,24 +26,16 @@ class EndPoint(object):
         }
         return verb_map[request.method](request)
 
-class ViewPost(EndPoint):
-    def __init__(self, template_env, post_service):
-        super(ViewPost, self).__init__(template_env)
-        self.post_service = post_service
-
-    def get(self, request):
-        self.response = "getting posts"
-
-    def post(self, request):
-        self.response = "postin posts!"
-
 class Posts(EndPoint):
     def __init__(self, template_env, post_service):
         super(Posts, self).__init__(template_env)
         self.post_service = post_service
 
     def get(self, request):
-        posts = self.post_service.filter(request.path_params.get("year"), request.path_params.get("month"))
+        if request.path_params.get("year"):
+            posts = self.post_service.filter(request.path_params.get("year"), request.path_params.get("month"))
+        else:
+            posts = self.post_service.get_all()
         template = self.template_env.get_template("multiple_view.html")
         return Response(template.render(posts=posts), mimetype="text/html")
 
@@ -78,5 +70,3 @@ class AllTags(EndPoint):
     def get(self, request):
         tags = self.tag_service.get_all()
         return Response(encode(tags), mimetype="application/json") 
-
-
