@@ -44,7 +44,8 @@ class Posts(EndPoint):
 
     def get(self, request):
         posts = self.post_service.filter(request.path_params.get("year"), request.path_params.get("month"))
-        return Response()
+        template = self.template_env.get_template("multiple_view.html")
+        return Response(template.render(posts=posts), mimetype="text/html")
 
 class SinglePost(EndPoint):
     def __init__(self, template_env, post_service):
@@ -56,7 +57,8 @@ class SinglePost(EndPoint):
             request.path_params.get("year"),
             request.path_params.get("month"),
             request.path_params.get("web_title"))
-        return Response()
+        template = self.template_env.get_template("single_view.html")
+        return Response(template.render(post=post), mimetype="text/html")
 
 class PostTags(EndPoint):
     def __init__(self, template_env, post_service):

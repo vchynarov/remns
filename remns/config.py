@@ -8,3 +8,4 @@ PASSWORD=config_data['admin']['password']
 FULLNAME=config_data['admin']['author']
 DB_CONN_STRING="{engine}+{driver}://{user}:{password}@{host}/{name}".format(**(config_data['db']))
 ADMIN_TEMPLATES_PATH='templates/admin'
+TEMPLATES_PATH='templates'

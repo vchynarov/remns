@@ -12,6 +12,7 @@ from models import PostService, TagService, TaggingService
 
 json_decoder = JSONDecoder()
 admin_env = Environment(loader=FileSystemLoader(config.ADMIN_TEMPLATES_PATH))
+env = Environment(loader=FileSystemLoader(config.TEMPLATES_PATH))
 SessionMaker = get_session_maker()
 
 tag_service = TagService(SessionMaker)
@@ -27,8 +28,8 @@ admin_all_posts = admin_endpoints.AllPosts(admin_env, post_service, tag_service,
 
 all_tags = endpoints.AllTags(None, tag_service) # Does not need env, so not passing one in.
 post_tags = endpoints.PostTags(None, post_service)
-posts = endpoints.Posts(None, post_service)
-single_post = endpoints.SinglePost(None, post_service)
+posts = endpoints.Posts(env, post_service)
+single_post = endpoints.SinglePost(env, post_service)
 
 url_map = Map([
     Rule('/admin/', endpoint=login),
