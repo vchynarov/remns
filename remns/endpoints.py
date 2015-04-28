@@ -37,6 +37,27 @@ class ViewPost(EndPoint):
     def post(self, request):
         self.response = "postin posts!"
 
+class Posts(EndPoint):
+    def __init__(self, template_env, post_service):
+        super(Posts, self).__init__(template_env)
+        self.post_service = post_service
+
+    def get(self, request):
+        posts = self.post_service.filter(request.path_params.get("year"), request.path_params.get("month"))
+        return Response()
+
+class SinglePost(EndPoint):
+    def __init__(self, template_env, post_service):
+        super(SinglePost, self).__init__(template_env)
+        self.post_service = post_service
+
+    def get(self, request):
+        post = self.post_service.retrieve(
+            request.path_params.get("year"),
+            request.path_params.get("month"),
+            request.path_params.get("web_title"))
+        return Response()
+
 class PostTags(EndPoint):
     def __init__(self, template_env, post_service):
         super(PostTags, self).__init__(template_env)
