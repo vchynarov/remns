@@ -50,7 +50,7 @@ class Login(AdminEndPoint):
 
     def post(self, request):
         login_form = request.form
-        if login_form.has_key('admin-username') and login_form.has_key('admin-password'):
+        if 'admin-username' in login_form and 'admin-password' in login_form:
         
             submitted_user = request.form['admin-username']
             submitted_password = request.form['admin-password']
@@ -110,10 +110,10 @@ class AllPosts(AdminEndPoint):
     
     def post(self, request):
         try:
-            new_id = self.post_service.create(request.data)
+            new_post = self.post_service.create(request.data)
             tag_ids = self.tag_service.initialize_tags(request.data["tags"])
-            self.tagging_service.set_tags(new_id, tag_ids)
-            response_json = {"status": "success", "id": new_id}
+            self.tagging_service.set_tags(new_post.id, tag_ids)
+            response_json = {"status": "success", "id": new_post.id}
         except Exception as e:
             print e
             response_json = {"status": "error"}
