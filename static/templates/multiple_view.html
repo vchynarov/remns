@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block main %}
+{% for post in posts %}
+<h2>{{ post.title }} </h2>
+<hr />
+{{ post.display_content }}
+
+{% endfor %}
+
+{% endblock %}

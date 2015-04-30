@@ -6,20 +6,19 @@ var gulp = require('gulp'),
 
 var build_tasks = [
   'build-epiceditor',
-  'build-vendor-css',
   'build-vendor-js',
   'move-vendor-fonts',
   'build-admin-js',
+  'build-css',
   'move-templates'
 ];
 
 var DISTDIR = 'remns/dist';
 var dist = {
     'static': path.join(DISTDIR, 'static', 'admin'),
-    'templates': path.join(DISTDIR, 'templates', 'admin'),
+    'templates': path.join(DISTDIR, 'templates'),
     'epiceditor': path.join(DISTDIR, 'static', 'admin', 'epiceditor'),
     'fonts': path.join(DISTDIR, 'static', 'fonts')
-
 };
 
 gulp.task('default', build_tasks);
@@ -31,22 +30,26 @@ gulp.task('watch', function() {
 var bowerPaths = {
     'css' : [
         'bower_components/selectize/dist/css/selectize.css',
-        'bower_components/materialize/dist/css/materialize.min.css'
+        'bower_components/pygments/css/monokai.css',
+        'bower_components/paper-less/css/paper.min.css'
      ],
     'js' : [
         'bower_components/jquery/dist/jquery.js',
         'bower_components/epiceditor/epiceditor/js/epiceditor.js',
         'bower_components/selectize/dist/js/standalone/selectize.min.js',
-        'bower_components/materialize/dist/js/materialize.min.js'
+        'bower_components/bootstrap/dist/js/bootstrap.min.js'
      ]
 };
 
 var remnsPaths = {
     'js' : [
-        'static/js/*.js',
+        'static/js/*.js'
+    ],
+    'css': [
+        'static/css/*.css'
     ],
     'templates' : [
-        'static/templates/*.html'
+        'static/templates/**/*.html'
     ]
 };
 
@@ -77,8 +80,9 @@ gulp.task('build-epiceditor', function() {
         .pipe(gulp.dest(dist.epiceditor));
 });
 
-gulp.task('build-vendor-css', function() {
-    return gulp.src(bowerPaths.css)
+
+gulp.task('build-css', function() {
+    return gulp.src(remnsPaths.css.concat(bowerPaths.css))
         .pipe(concat('admin.css'))
         .pipe(gulp.dest(dist.static));
 });

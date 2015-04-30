@@ -55,7 +55,7 @@ remns.init = function() {
       theme: {
         base: '/base/epiceditor.css',
         preview: '/preview/preview-dark.css',
-        editor: '/editor/epic-dark.css'
+        editor: '/editor/epic-light.css'
       },
       autogrow: {
         minHeight: 500,
@@ -121,8 +121,6 @@ remns.tagsInit = function() {
             },
             render: {
                 item: function(data, escape) {
-                    console.log('hitting render!');
-                    console.log(data);
                     return '<div class="btn btn-small blue" >' + data.name + '</div>';
                 }
             }});

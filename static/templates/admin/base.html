@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <link href="/static/admin/admin.css" rel="stylesheet" type="text/css" />
+        <script src="/static/admin/admin.js"></script>
+
+    </head>
+
+
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="row">
+                    <h2></h2>
+                </div>
+                <div class="row">
+
+                <div class="col-sm-3 sidebar">
+                    <div class="nav">
+                        <h2>remns</h2>
+                    </div>
+                    <ul class="nav nav-sidebar">
+                        <li>All Posts</li>
+                        <li>New</li>
+                        <li>Log Out</li>
+                    </ul>
+                </div>
+                <div class="col-sm-9 main">
+                    {% block main %}
+                    {% endblock %}
+                </div>
+              </div>
+            </div>
+        </div>
+    </body>
+
+</html>

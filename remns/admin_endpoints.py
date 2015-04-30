@@ -26,17 +26,6 @@ class AdminEndPoint(EndPoint):
             return super(AdminEndPoint, self).get_response(request)
         else:
             return redirect('/admin')
-                
-class ViewPost(AdminEndPoint):
-    def __init__(self, template_env, post_service):
-        super(Login, self).__init__(self, template_env)
-        self.post_service = post_service
-
-    def get(self, request):
-        self.response = "getting posts"
-
-    def post(self, request):
-        self.response = "postin posts!"
 
 class Login(AdminEndPoint):
     def __init__(self, template_env, username, password):
