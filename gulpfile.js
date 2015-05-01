@@ -24,7 +24,7 @@ var dist = {
 gulp.task('default', build_tasks);
 
 gulp.task('watch', function() {
-    gulp.watch(remnsPaths.js.concat(remnsPaths.templates), build_tasks);
+    gulp.watch(remnsPaths.js.concat(remnsPaths.templates).concat(remnsPaths.css), build_tasks);
 });
  
 var bowerPaths = {
@@ -59,7 +59,7 @@ gulp.task('move-templates', function() {
 });
 
 gulp.task('move-vendor-fonts', function() {
-    return gulp.src('bower_components/materialize/font/roboto/*')
+    return gulp.src('bower_components/bootstrap/fonts/*.woff')
         .pipe(gulp.dest(dist.fonts));
 });
 
@@ -82,7 +82,7 @@ gulp.task('build-epiceditor', function() {
 
 
 gulp.task('build-css', function() {
-    return gulp.src(remnsPaths.css.concat(bowerPaths.css))
+    return gulp.src(bowerPaths.css.concat(remnsPaths.css))
         .pipe(concat('admin.css'))
         .pipe(gulp.dest(dist.static));
 });

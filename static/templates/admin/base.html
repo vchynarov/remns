@@ -3,35 +3,35 @@
         <title>{{ title }}</title>
         <link href="/static/admin/admin.css" rel="stylesheet" type="text/css" />
         <script src="/static/admin/admin.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 
     </head>
 
 
     <body>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="row">
-                    <h2></h2>
-                </div>
-                <div class="row">
 
-                <div class="col-sm-3 sidebar">
-                    <div class="nav">
-                        <h2>remns</h2>
+
+            <div id="container">
+                    <div class="col-sm-2 sidebar" id="leftnav">
+                        <div class="nav">
+                            <h2>remns</h2>
+                            <hr />
+                        </div>
+                        <div class="spacer120"></div>
+                        <ul class="nav nav-sidebar">
+                            <li>All Posts</li>
+                            <li>New</li>
+                            <li>Log Out</li>
+                        </ul>
                     </div>
-                    <ul class="nav nav-sidebar">
-                        <li>All Posts</li>
-                        <li>New</li>
-                        <li>Log Out</li>
-                    </ul>
-                </div>
-                <div class="col-sm-9 main">
-                    {% block main %}
-                    {% endblock %}
-                </div>
+
+                    <div class="col-sm-10" id="main">
+                        {% block main %}
+                        {% endblock %}
+                    </div>
               </div>
-            </div>
-        </div>
+
     </body>
 
 </html>

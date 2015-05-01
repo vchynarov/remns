@@ -1,4 +1,52 @@
-.sidebar {
-    color: red;
-    background-color: blue;
+
+
+
+#leftnav {
+    font-family: 'Raleway';
+    font-weight: 400;
+
+    position: fixed;
+    //    color: white;
+    background-color: #f6f6f6;
+    height: 100%;
+    width: 20%;
+
+}
+#container {
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body {
+    background-color: #f6f6f6;
+}
+#main {
+    background-color: #f6f6f6;
+}
+#leftnav h2 {
+    color: grey;
+}
+
+input:focus, select:focus {
+    outline: none;
+}
+
+input {
+    background-color: #f6f6f6;
+}
+
+#epiceditor-wrapper body {
+
+}
+
+#main {
+    margin-left: 20%;
+}
+
+
+li {
+    font-family: 'Raleway';
+    font-size: 35px;
+    line-height: 50px;
 }
