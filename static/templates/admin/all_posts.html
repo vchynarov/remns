@@ -6,7 +6,7 @@
 <table class="table">
     <thead>
         <th class="8 wide">Title</th>
-        <th class="3 wide">Creation date</th>
+        <th class="3 wide">Created</th>
         <th class="3 wide">Last updated</th>
         <th class="2 wide">Delete</th>
     </thead>
@@ -20,10 +20,10 @@
                     </a>
                 </td>
                 <td>
-                    {{ post.created }}
+                    {{ post.created.strftime('%-I:%M %p %h %d, %Y') }}
                 </td>
                 <td>
-                    {{ post.updated }}
+                    {{ post.updated.strftime('%-I:%M %p %h %d, %Y') }}
                 </td>
                 <td>
                     <span><i class="glyphicon glyphicon-trash"></i></span>
