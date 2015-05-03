@@ -121,7 +121,7 @@ remns.tagsInit = function() {
             },
             render: {
                 item: function(data, escape) {
-                    return '<div class="btn btn-small blue" >' + data.name + '</div>';
+                    return '<span><a class="btn btn-xs btn-warning post-tag" >' + data.name + '</a>&nbsp;</span>';
                 }
             }});
         remns.existingTags = all_tags; 
