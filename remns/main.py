@@ -21,6 +21,7 @@ tagging_service = TaggingService(SessionMaker)
 
 ## Instantiate controllers
 login = admin_endpoints.Login(admin_env, config.USER, config.HASHED_PASSWORD)
+logout = admin_endpoints.Logout()
 create_post = admin_endpoints.CreatePost(admin_env, post_service)
 edit_post = admin_endpoints.Post(admin_env, post_service, tag_service, tagging_service)
 admin_all_posts = admin_endpoints.AllPosts(admin_env, post_service, tag_service, tagging_service)
@@ -32,6 +33,7 @@ single_post = endpoints.SinglePost(env, post_service)
 
 url_map = Map([
     Rule('/admin/', endpoint=login),
+    Rule('/admin/logout/', endpoint=logout),
     Rule('/admin/posts/', endpoint=admin_all_posts),
     Rule('/admin/posts/new/', endpoint=create_post),
     Rule('/admin/posts/<int:id>/', endpoint=edit_post),

@@ -51,6 +51,19 @@ class Login(AdminEndPoint):
                 return response
         return Response("BAD LOGIN!")
 
+class Logout(AdminEndPoint):
+    """
+    Deletes the associated cookie in the cookie store.
+    """
+    def __init__(self):
+        super(Logout, self).__init__(None)
+
+    def post(self, request):
+        cookie = request.cookies.get('remns_session_id')
+        try:
+            session_cookies.pop(cookie)
+        except KeyError:
+            pass
 
 # /admin/posts/:id
 class Post(AdminEndPoint):
