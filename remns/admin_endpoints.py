@@ -58,12 +58,13 @@ class Logout(AdminEndPoint):
     def __init__(self):
         super(Logout, self).__init__(None)
 
-    def post(self, request):
+    def get(self, request):
         cookie = request.cookies.get('remns_session_id')
         try:
             session_cookies.pop(cookie)
         except KeyError:
             pass
+        return redirect("/admin/")
 
 # /admin/posts/:id
 class Post(AdminEndPoint):
