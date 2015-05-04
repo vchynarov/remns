@@ -4,6 +4,7 @@ from werkzeug.utils import redirect
 import uuid
 import base64
 import time
+import bcrypt
 from json.encoder import JSONEncoder
 
 json_encoder = JSONEncoder()
@@ -28,10 +29,10 @@ class AdminEndPoint(EndPoint):
             return redirect('/admin')
 
 class Login(AdminEndPoint):
-    def __init__(self, template_env, username, password):
+    def __init__(self, template_env, username, hashed_password):
         super(Login, self).__init__(template_env)
         self.username = username
-        self.password = password
+        self.hashed_password = hashed_password
 
     def get(self, request):
         template = self.template_env.get_template('login.html')
@@ -40,10 +41,9 @@ class Login(AdminEndPoint):
     def post(self, request):
         login_form = request.form
         if 'admin-username' in login_form and 'admin-password' in login_form:
-        
             submitted_user = request.form['admin-username']
-            submitted_password = request.form['admin-password']
-            if submitted_user == self.username and submitted_password == self.password:
+            submitted_password = request.form['admin-password'].encode()  # Bcrypt doesn't work with Unicode strings
+            if submitted_user == self.username and bcrypt.hashpw(submitted_password, self.hashed_password) == self.hashed_password:
                 cookie = generate_cookie()
                 session_cookies[cookie] = int(time.time())
                 response = redirect(request.path)

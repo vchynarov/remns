@@ -20,7 +20,7 @@ post_service = PostService(SessionMaker)
 tagging_service = TaggingService(SessionMaker)
 
 ## Instantiate controllers
-login = admin_endpoints.Login(admin_env, config.USER, config.PASSWORD)
+login = admin_endpoints.Login(admin_env, config.USER, config.HASHED_PASSWORD)
 create_post = admin_endpoints.CreatePost(admin_env, post_service)
 edit_post = admin_endpoints.Post(admin_env, post_service, tag_service, tagging_service)
 admin_all_posts = admin_endpoints.AllPosts(admin_env, post_service, tag_service, tagging_service)
